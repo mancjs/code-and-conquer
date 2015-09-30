@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/register.css" />
+    <title>Code &amp; Conquer</title>
+  </head>
+  <body>
+    <div class="reg-container">
+      <h1>Code &amp; Conquer</h1>
+
+      <div class="roles-container">
+        <div class="role-container">
+          <div class="role">
+            <div class="left-arrow">&#x2039;</div>
+            <div class="right-arrow">&#x203a;</div>
+
+            <img class="icon icon-minelayer" />
+
+            <div class="header">
+              <div class="title">Minelayer</div>
+              <div class="description">
+                A minelayer can lay a single mine at a grid location.
+                If tripped, they can later freeze the player for 1 minute.
+              </div>
+            </div>
+
+            <div class="form">
+              <div class="error"></div>
+              <input type="text" name="email" placeholder="Email address" maxlength="50" />
+              <input type="text" name="team" placeholder="Team name" maxlength="25" />
+              <input type="hidden" name="role" value="minelayer" />
+              <input type="submit" value="Register" />
+            </div>
+          </div>
+        </div>
+
+        <div class="role-container">
+          <div class="role">
+            <div class="left-arrow">&#x2039;</div>
+            <div class="right-arrow">&#x203a;</div>
+
+            <img class="icon icon-cloaker" />
+
+            <div class="header">
+              <div class="title">Cloaker</div>
+              <div class="description">
+                A cloaker can mask the health of their squares for 5
+                minutes, making them appear 100% healthy to others.
+              </div>
+            </div>
+
+            <div class="form">
+              <div class="error"></div>
+              <input type="text" name="email" placeholder="Email address" maxlength="50" />
+              <input type="text" name="team" placeholder="Team name" maxlength="25" />
+              <input type="hidden" name="role" value="cloaker" />
+              <input type="submit" value="Register" />
+            </div>
+          </div>
+        </div>
+
+        <div class="role-container">
+          <div class="role">
+            <div class="left-arrow">&#x2039;</div>
+            <div class="right-arrow">&#x203a;</div>
+
+            <img class="icon icon-spy" />
+
+            <div class="header">
+              <div class="title">Spy</div>
+              <div class="description">
+                A spy can redirect another player's commands to a grid
+                location of their choosing for 1 minute.
+              </div>
+            </div>
+
+            <div class="form">
+              <div class="error"></div>
+              <input type="text" name="email" placeholder="Email address" maxlength="50" />
+              <input type="text" name="team" placeholder="Team name" maxlength="25" />
+              <input type="hidden" name="role" value="spy" />
+              <input type="submit" value="Register" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dots">
+        <div id="dot1"></div>
+        <div id="dot2"></div>
+        <div id="dot3"></div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="/scripts/http.js"></script>
+    <script type="text/javascript" src="/scripts/registration.js"></script>
+  </body>
+</html>

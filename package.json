@@ -1,0 +1,19 @@
+{
+  "name": "code-and-conquer",
+  "version": "0.1.0",
+  "description": "Code & Conquer",
+  "main": "app.js",
+  "scripts": {
+    "start": "node start.js",
+    "test": "NODE_ENV=test mocha spec"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "graceful-fs": "^4.1.2"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^2.3.2"
+  }
+}

@@ -1,0 +1,206 @@
+body {
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
+  color: #f9eed1;
+  font-family: 'Georgia';
+  background: rgba(54, 53, 60, 1) url('/images/tiles/tile.png') repeat;
+  background-size: 798px 798px;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}
+
+/* account */
+
+.account-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.account-container h1 {
+  margin: 0;
+  padding: 12px;
+  font-size: 32px;
+  font-weight: 300;
+  text-align: center;
+  background: rgba(54, 53, 60, 1);
+}
+
+.account-container .panes {
+  overflow: hidden;
+  width: 900px;
+  padding: 40px 0 0 40px;
+  margin: 30px auto;
+  box-sizing: border-box;
+}
+
+.account-container .account-details {
+  float: left;
+  background: rgba(54, 53, 60, 1);
+  position: relative;
+  border-radius: 20px;
+  padding: 12px;
+  width: 300px;
+  box-sizing: border-box;
+}
+
+.account-container .account-details .account-data {
+  margin-top: 40px;
+}
+
+.account-container .account-details .avatar {
+  position: absolute;
+  background: #36353c;
+  border: solid 10px #36353c;
+  top: -40px;
+  left: -40px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.account-container h2 {
+  color: #f9eed1;
+  font-size: 24px;
+  font-weight: 300;
+  font-family: 'Georgia';
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.account-container h2.team-name {
+  padding: 4px 12px 25px 58px;
+}
+
+.data-row {
+  overflow: hidden;
+  padding: 5px 0;
+  font-size: 16px;
+}
+
+.data-row .key {
+  float: left;
+  color: #f9eed1;
+  padding: 10px;
+}
+
+.data-row .value {
+  float: right;
+  padding: 10px 20px;
+  min-width: 35px;
+  color: #f9eed1;
+  background: #2a2930;
+  text-align: center;
+  font-family: 'Courier New';
+}
+
+.data-row .value #team-colour {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 4px auto;
+}
+
+.grid-info {
+  float: left;
+  background: rgba(54, 53, 60, 1);
+  position: relative;
+  border-radius: 20px;
+  padding: 15px;
+  width: 400px;
+  margin-left: 20px;
+  box-sizing: border-box;
+}
+
+.grid-info #cell-info {
+  background: #2a2930;
+  margin: 15px 0 0 0;
+  display: none;
+  height: 0;
+  padding: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+  -webkit-transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  -o-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
+}
+
+.grid-info .grid {
+  margin: 15px 0 0 0;
+}
+
+.grid-info .grid .row-container {
+  display: block;
+  text-align: center;
+  height: 24px;
+  margin-top: -1px;
+}
+
+.grid-info .grid .row-container .row {
+  display: inline-block;
+  height: 24px;
+}
+
+.grid-info .grid .row-container .row .cell {
+  display: inline-block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  background: #2a2930;
+  border: solid 1px rgba(54, 53, 60, 1);
+  box-sizing: border-box;
+  margin-left: -1px;
+  cursor: pointer;
+}
+
+.grid-info .grid .row-container .row .cell:hover, .grid-info .grid .row-container .row .cell.selected {
+  background: #10101f;
+}
+
+.grid-info .grid .row-container .row .cell .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 6px 0 0 6px;
+  padding: 0;
+}
+
+.grid-info .grid-data {
+  margin-top: 10px;
+}
+
+.account-container .players {
+  float: left;
+  margin-left: 20px;
+  box-sizing: border-box;
+}
+
+.account-container .players .player {
+  position: relative;
+  margin-bottom: 35px
+}
+
+.account-container .players .player .score {
+  width: 50px;
+  height: 35px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 2px;
+  background: rgba(54, 53, 60, 1);
+  position: absolute;
+  bottom: -20px;
+  left: 30px;
+}
+
+.account-container .players .player img {
+  background: #36353c;
+  border: solid 10px #36353c;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}

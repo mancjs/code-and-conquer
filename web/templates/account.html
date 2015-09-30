@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/account.css" />
+    <title>Code &amp; Conquer</title>
+  </head>
+  <body>
+    <div class="account-container">
+      <h1>{{= team.name }}</h1>
+
+      <div class="panes">
+        <div class="account-details">
+          <img class="avatar" src="{{= team.gravatar }}" />
+
+          <div class="account-data">
+            <div class="data-row">
+              <div class="key">Key</div>
+              <div class="value">{{= team.key }}</div>
+            </div>
+
+            <div class="data-row">
+              <div class="key">Team Colour</div>
+              <div class="value"><div id="team-colour" style="background: {{= team.colour }};"></div></div>
+            </div>
+
+            <div class="data-row">
+              <div class="key">Requests</div>
+              <div class="value">{{= team.requests }}</div>
+            </div>
+
+            <div class="data-row">
+              <div class="key">Grid</div>
+              <div class="value">{{= gameStatus.width }}x{{= gameStatus.height }}</div>
+            </div>
+
+            <div class="data-row">
+              <div class="key">Double Squares</div>
+              <div class="value">{{= gameStatus.doubleSquares }}</div>
+            </div>
+
+            <div class="data-row">
+              <div class="key">Triple Squares</div>
+              <div class="value">{{= gameStatus.tripleSquares }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-info">
+          <h2 class="middle">The Grid</h2>
+
+          <div id="cell-info">..<br />..<br />..</div>
+
+          <div id="user-grid" class="grid"></div>
+
+          <div class="grid-data">
+            <div class="data-row">
+              <div class="key">Squares Owned</div>
+              <div class="value">0</div>
+            </div>
+
+            <div class="data-row">
+              <div class="key">Free Squares</div>
+              <div class="value">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="players">
+          <div class="player">
+            <img src="{{= team.gravatar }}" />
+            <div class="score">60</div>
+          </div>
+
+          <div class="player">
+            <img src="{{= team.gravatar }}" />
+            <div class="score">22</div>
+          </div>
+
+          <div class="player">
+            <img src="{{= team.gravatar }}" />
+            <div class="score">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="/scripts/http.js"></script>
+    <script type="text/javascript" src="/scripts/account.js"></script>
+  </body>
+</html>
