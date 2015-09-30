@@ -7,7 +7,7 @@ beforeEach(function() {
 });
 
 describe('game', function() {
-  it('can start a new game', function() {
+  it('new game starts with correct state', function() {
     this.slow(10000);
 
     game.start({ width: 10, height: 10 });

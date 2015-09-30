@@ -106,6 +106,15 @@ describe('registration', function() {
     expect(db.get().teams.length).to.be(1);
   });
 
+  it('assigns new colours to successive registrations', function() {
+    registration.open();
+
+    var response1 = registration.createTeam('Team Name 1', 'user1@host.com', 'spy');
+    var response2 = registration.createTeam('Team Name 2', 'user2@host.com', 'cloaker');
+
+    expect(response1.team.colour).to.not.be(response2.team.colour);
+  });
+
   it('returns correct team when queried', function() {
     registration.open();
 
