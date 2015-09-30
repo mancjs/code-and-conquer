@@ -58,7 +58,7 @@ var createTeam = function(name, email, role) {
   var team = {
     key: createKey(),
     gravatar: getGravatarUrl(email),
-    colour: colours.next(db.get().teams.length),
+    colour: colours.get(db.get().teams.length),
     role: role,
     name: name,
     email: email,
@@ -95,6 +95,10 @@ var getStatus = function() {
 var validate = function(name, email, role) {
   if (!db.get().registrationOpen) {
     return 'Registration is currently closed';
+  }
+
+  if (colours.all.length <= db.get().teams.length) {
+    return 'Server is full (' + colours.all.length + ')';
   }
 
   if (!email || email.length > 50) {

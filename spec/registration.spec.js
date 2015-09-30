@@ -115,6 +115,19 @@ describe('registration', function() {
     expect(response1.team.colour).to.not.be(response2.team.colour);
   });
 
+  it('rejects registration when there are no more colours to use', function() {
+    registration.open();
+
+    colours.all.forEach(function() {
+      db.get().teams.push({ name: 'some-team' });
+    });
+
+    var response = registration.createTeam('Team Name', 'user@host.com', 'spy');
+
+    expect(response.err).to.match(/is full/);
+    expect(db.get().teams.length).to.be(colours.all.length);
+  });
+
   it('returns correct team when queried', function() {
     registration.open();
 
