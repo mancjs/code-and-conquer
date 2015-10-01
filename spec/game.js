@@ -47,7 +47,8 @@ describe('game', function() {
         expect(cell.owned).to.be(false);
 
         // no cells should have history
-        expect(cell.history.length).to.be(0);
+        expect(Object.prototype.toString.call(cell.history)).to.match(/Object/);
+        expect(Object.keys(cell.history).length).to.be(0);
       });
     });
   });

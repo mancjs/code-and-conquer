@@ -33,7 +33,7 @@ var generate = function(width, height) {
     return {
       bonus: 1,
       owned: false,
-      history: []
+      history: {}
     };
   };
 
