@@ -80,20 +80,20 @@ var setCellOwner = function(cell, ownerData) {
   cell.history = { attacks: {}, defends: {} };
 };
 
-var addCellAttackHistory = function(cell, key) {
-  if (cell.history.attacks[key] === undefined) {
-    cell.history.attacks[key] = 0;
+var addCellAttackHistory = function(cell, name) {
+  if (cell.history.attacks[name] === undefined) {
+    cell.history.attacks[name] = 0;
   }
 
-  cell.history.attacks[key] += 1;
+  cell.history.attacks[name] += 1;
 };
 
-var addCellDefendHistory = function(cell, key) {
-  if (cell.history.defends[key] === undefined) {
-    cell.history.defends[key] = 0;
+var addCellDefendHistory = function(cell, name) {
+  if (cell.history.defends[name] === undefined) {
+    cell.history.defends[name] = 0;
   }
 
-  cell.history.defends[key] += 1;
+  cell.history.defends[name] += 1;
 };
 
 module.exports = {

@@ -28,7 +28,7 @@ var attack = function(key, x, y) {
   if (cell.health <= 0) {
     grid.setCellOwner(cell, team.getPublicData(key));
   } else {
-    grid.addCellAttackHistory(cell, key);
+    grid.addCellAttackHistory(cell, team.getTeamName(key));
   }
 
   team.useRequest(key);
@@ -58,7 +58,7 @@ var defend = function(key, x, y) {
     cell.health = maxHealth;
   }
 
-  grid.addCellDefendHistory(cell, key);
+  grid.addCellDefendHistory(cell, team.getTeamName(key));
 
   team.useRequest(key);
 

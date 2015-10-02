@@ -122,55 +122,55 @@ describe('game', function() {
     it('modifies correct cell state for an attack command', function() {
       var state = db.get();
 
-      state.teams.push({ key: 'team-1', requests: 30 });
-      state.teams.push({ key: 'team-2', requests: 30 });
+      state.teams.push({ key: 'team-1', name: 'Team 1', requests: 30 });
+      state.teams.push({ key: 'team-2', name: 'Team 2', requests: 30 });
 
       var cell1 = grid.getCell(state.grid, 4, 1);
       var cell2 = grid.getCell(state.grid, 2, 3);
 
       game.attack('team-1', 4, 1);
-      expect(cell1.history.attacks['team-1']).to.be(1);
+      expect(cell1.history.attacks['Team 1']).to.be(1);
       expect(cell1.health).to.be(59);
 
       game.attack('team-1', 4, 1);
-      expect(cell1.history.attacks['team-1']).to.be(2);
+      expect(cell1.history.attacks['Team 1']).to.be(2);
       expect(cell1.health).to.be(58);
 
       game.attack('team-2', 2, 3);
-      expect(cell2.history.attacks['team-2']).to.be(1);
+      expect(cell2.history.attacks['Team 2']).to.be(1);
       expect(cell2.health).to.be(59);
 
       game.attack('team-2', 4, 1);
-      expect(cell1.history.attacks['team-1']).to.be(2);
-      expect(cell1.history.attacks['team-2']).to.be(1);
+      expect(cell1.history.attacks['Team 1']).to.be(2);
+      expect(cell1.history.attacks['Team 2']).to.be(1);
       expect(cell1.health).to.be(57);
     });
 
     it('modifies correct cell state for a defend command', function() {
       var state = db.get();
 
-      state.teams.push({ key: 'team-1', requests: 30 });
-      state.teams.push({ key: 'team-2', requests: 30 });
+      state.teams.push({ key: 'team-1', name: 'Team 1', requests: 30 });
+      state.teams.push({ key: 'team-2', name: 'Team 2', requests: 30 });
 
       var cell1 = grid.getCell(state.grid, 1, 1);
       var cell2 = grid.getCell(state.grid, 1, 2);
       var cell3 = grid.getCell(state.grid, 1, 3);
 
       game.defend('team-1', 1, 1);
-      expect(cell1.history.defends['team-1']).to.be(1);
+      expect(cell1.history.defends['Team 1']).to.be(1);
       expect(cell1.health).to.be(60);
 
       game.attack('team-2', 1, 2);
       game.defend('team-1', 1, 2);
-      expect(cell2.history.attacks['team-2']).to.be(1);
-      expect(cell2.history.defends['team-1']).to.be(1);
+      expect(cell2.history.attacks['Team 2']).to.be(1);
+      expect(cell2.history.defends['Team 1']).to.be(1);
       expect(cell2.health).to.be(60);
 
       game.attack('team-2', 1, 3);
       game.defend('team-1', 1, 3);
       game.attack('team-2', 1, 3);
-      expect(cell3.history.attacks['team-2']).to.be(2);
-      expect(cell3.history.defends['team-1']).to.be(1);
+      expect(cell3.history.attacks['Team 2']).to.be(2);
+      expect(cell3.history.defends['Team 1']).to.be(1);
       expect(cell3.health).to.be(59);
     });
   });
