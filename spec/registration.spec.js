@@ -8,14 +8,14 @@ var createString = function(length) {
 };
 
 beforeEach(function() {
-  db.clear();
+  db.init();
 });
 
 describe('registration', function() {
   it('rejects when registration is closed', function() {
     registration.close();
 
-    var response = registration.createTeam('Team Name', 'user@host.com', 'minelayers');
+    var response = registration.createTeam('Team Name', 'user@host.com', 'minelayer');
 
     expect(response.err).to.match(/closed/);
     expect(db.get().teams.length).to.be(0);
@@ -24,7 +24,7 @@ describe('registration', function() {
   it('rejects when name is missing', function() {
     registration.open();
 
-    var response = registration.createTeam(null, 'user@host.com', 'spies');
+    var response = registration.createTeam(null, 'user@host.com', 'spy');
 
     expect(response.err).to.match(/team name/);
     expect(db.get().teams.length).to.be(0);
@@ -33,16 +33,25 @@ describe('registration', function() {
   it('rejects when name is more than 25 chars', function() {
     registration.open();
 
-    var response = registration.createTeam(createString(26), 'user@host.com', 'cloakers');
+    var response = registration.createTeam(createString(26), 'user@host.com', 'cloaker');
 
     expect(response.err).to.match(/team name/);
+    expect(db.get().teams.length).to.be(0);
+  });
+
+  it('rejects when name is "cpu"', function() {
+    registration.open();
+
+    var response = registration.createTeam('cpu', 'user@host.com', 'cloaker');
+
+    expect(response.err).to.match(/valid team name/);
     expect(db.get().teams.length).to.be(0);
   });
 
   it('rejects when email is missing', function() {
     registration.open();
 
-    var response = registration.createTeam('Team Name', null, 'minelayers');
+    var response = registration.createTeam('Team Name', null, 'minelayer');
 
     expect(response.err).to.match(/email address/);
     expect(db.get().teams.length).to.be(0);
@@ -51,7 +60,7 @@ describe('registration', function() {
   it('rejects when email is more than 50 chars', function() {
     registration.open();
 
-    var response = registration.createTeam('Team Name', createString(51), 'cloakers');
+    var response = registration.createTeam('Team Name', createString(51), 'cloaker');
 
     expect(response.err).to.match(/email address/);
     expect(db.get().teams.length).to.be(0);
@@ -79,7 +88,7 @@ describe('registration', function() {
     registration.open();
 
     db.get().teams.push({ email: 'existing@host.com' });
-    var response = registration.createTeam('Team Name', 'existing@host.com', 'minelayers');
+    var response = registration.createTeam('Team Name', 'existing@host.com', 'minelayer');
 
     expect(response.err).to.match(/same name or email/);
     expect(db.get().teams.length).to.be(1);
@@ -89,7 +98,7 @@ describe('registration', function() {
     registration.open();
 
     db.get().teams.push({ name: 'Existing Team Name' });
-    var response = registration.createTeam('Existing Team Name', 'user@host.com', 'cloakers');
+    var response = registration.createTeam('Existing Team Name', 'user@host.com', 'cloaker');
 
     expect(response.err).to.match(/same name or email/);
     expect(db.get().teams.length).to.be(1);

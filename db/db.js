@@ -1,12 +1,7 @@
 var fs = require('graceful-fs');
 var log = require('../lib/log');
 
-var game = {
-  registrationOpen: false,
-  date: new Date,
-  teams: [],
-  grid: []
-};
+var game;
 
 var config = {
   database: process.cwd() + '/data/game.json',
@@ -28,7 +23,7 @@ var load = function() {
   setTimeout(save, config.saveInterval);
 };
 
-var clear = function() {
+var init = function() {
   game = {
     registrationOpen: false,
     date: new Date,
@@ -92,8 +87,10 @@ var copy = function(input, output, callback) {
   fs.createReadStream(input).pipe(writeStream);
 };
 
+init();
+
 module.exports = {
   get: get,
   load: load,
-  clear: clear
+  init: init
 };

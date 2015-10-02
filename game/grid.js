@@ -29,11 +29,15 @@ var applyBonusSquares = function(cells, coords, bonus) {
 var generate = function(width, height) {
   var cells = [];
 
-  var unownedState = function() {
+  var preownedState = function() {
     return {
       bonus: 1,
-      owned: false,
-      history: {}
+      health: 60,
+      history: {
+        attacks: {},
+        defends: {}
+      },
+      owner: { name: 'cpu', colour: '#333333' }
     };
   };
 
@@ -43,7 +47,7 @@ var generate = function(width, height) {
     }
 
     for (var x = 0; x < width; x++) {
-      cells[y].push(unownedState());
+      cells[y].push(preownedState());
     }
   }
 
@@ -62,6 +66,40 @@ var generate = function(width, height) {
   };
 };
 
+var getCell = function(grid, x, y) {
+  var cells = grid.cells;
+
+  try {
+    if (cells[y][x]) return cells[y][x];
+  } catch (err) {}
+};
+
+var setCellOwner = function(cell, ownerData) {
+  cell.owner = ownerData;
+  cell.health = 120;
+  cell.history = { attacks: {}, defends: {} };
+};
+
+var addCellAttackHistory = function(cell, key) {
+  if (cell.history.attacks[key] === undefined) {
+    cell.history.attacks[key] = 0;
+  }
+
+  cell.history.attacks[key] += 1;
+};
+
+var addCellDefendHistory = function(cell, key) {
+  if (cell.history.defends[key] === undefined) {
+    cell.history.defends[key] = 0;
+  }
+
+  cell.history.defends[key] += 1;
+};
+
 module.exports = {
-  generate: generate
+  generate: generate,
+  getCell: getCell,
+  setCellOwner: setCellOwner,
+  addCellAttackHistory: addCellAttackHistory,
+  addCellDefendHistory: addCellDefendHistory
 };

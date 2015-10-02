@@ -109,6 +109,10 @@ var validate = function(name, email, role) {
     return 'Please enter a team name (25 chars or less)';
   }
 
+  if (name === 'cpu') {
+    return 'Please enter a valid team name (25 chars or less)';
+  }
+
   var duplicates = db.get().teams.filter(function(team) {
     return team.name === name || team.email === email;
   });
