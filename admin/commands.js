@@ -1,19 +1,30 @@
 var registration = require('../registration/registration');
 var game = require('../game/game');
 
-var getStatus = function() {
-  var registrationStatus = registration.getStatus();
-  var gameStatus = game.getStatus();
+var initGame = function(args) {
+  if (!args || args.indexOf('x') === -1) {
+    return 'missing grid size (e.g. 10x10)';
+  }
 
-  var values = [
-    'teams: ' + registrationStatus.teamCount,
-    'registration: ' + (registrationStatus.open ? 'open' : 'closed'),
-    'grid: ' + gameStatus.width + 'x' + gameStatus.height,
-    'x2: ' + gameStatus.doubleSquares,
-    'x3: ' + gameStatus.tripleSquares
-  ];
+  var gridSize = {
+    width: parseInt(args.split('x')[0].trim()),
+    height: parseInt(args.split('x')[1].trim())
+  };
 
-  return values.join(', ');
+  game.init(gridSize);
+};
+
+var startGame = function() {
+  registration.close();
+  game.start();
+};
+
+var openRegistration = function() {
+  registration.open();
+};
+
+var closeRegistration = function() {
+  registration.close();
 };
 
 var getTeams = function() {
@@ -40,32 +51,28 @@ var deleteTeam = function(args) {
   return registration.deleteTeam(args);
 };
 
-var startGame = function(args) {
-  if (!args || args.indexOf('x') === -1) {
-    return 'missing grid size (e.g. 10x10)';
-  }
+var getStatus = function() {
+  var registrationStatus = registration.getStatus();
+  var gameStatus = game.getStatus();
 
-  var gridSize = {
-    width: parseInt(args.split('x')[0].trim()),
-    height: parseInt(args.split('x')[1].trim())
-  };
+  var values = [
+    'teams: ' + registrationStatus.teamCount,
+    'registration: ' + (registrationStatus.open ? 'open' : 'closed'),
+    'game: ' + (gameStatus.started ? 'started' : 'stopped'),
+    'grid: ' + gameStatus.width + 'x' + gameStatus.height,
+    'x2: ' + gameStatus.doubleSquares,
+    'x3: ' + gameStatus.tripleSquares
+  ];
 
-  game.start(gridSize);
-};
-
-var openRegistration = function() {
-  registration.open();
-};
-
-var closeRegistration = function() {
-  registration.close();
+  return values.join(', ');
 };
 
 module.exports = {
-  'start': startGame,
-  'status': getStatus,
-  'teams': getTeams,
-  'del-team': deleteTeam,
+  'init-game': initGame,
+  'start-game': startGame,
   'open-reg': openRegistration,
-  'close-reg': closeRegistration
+  'close-reg': closeRegistration,
+  'get-teams': getTeams,
+  'del-team': deleteTeam,
+  'status': getStatus
 };

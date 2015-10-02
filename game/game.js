@@ -2,18 +2,37 @@ var db = require('../db/db');
 var grid = require('./grid');
 var log = require('../lib/log');
 var team = require('./team');
+//var events = require('./events');
 
-var start = function(gridSize) {
+var init = function(gridSize) {
   var state = db.init();
-
   state.grid = grid.generate(gridSize.width, gridSize.height);
 
-  log('game', 'started with ' + gridSize.width + 'x' + gridSize.height + ' grid');
+  log('game', 'initialised with ' + gridSize.width + 'x' + gridSize.height + ' grid');
+};
+
+var start = function() {
+  var state = db.get();
+  state.gameStarted = true;
+
+  log('game', 'started');
+};
+
+var verifyTeam = function(key) {
+  if (!db.get().gameStarted) {
+    return { err: 'game not started' };
+  }
+
+  if (!team.hasRequests(key)) {
+    return { err: 'no requests left' };
+  }
 };
 
 var attack = function(key, x, y) {
-  if (!team.hasRequests(key)) {
-    return { err: 'no requests left' };
+  var verificationError = verifyTeam(key);
+
+  if (verificationError) {
+    return verificationError;
   }
 
   var state = db.get();
@@ -27,6 +46,7 @@ var attack = function(key, x, y) {
 
   if (cell.health <= 0) {
     grid.setCellOwner(cell, team.getPublicData(key));
+    //events.add(message);
   } else {
     grid.addCellAttackHistory(cell, team.getTeamName(key));
   }
@@ -39,8 +59,10 @@ var attack = function(key, x, y) {
 };
 
 var defend = function(key, x, y) {
-  if (!team.hasRequests(key)) {
-    return { err: 'no requests left' };
+  var verificationError = verifyTeam(key);
+
+  if (verificationError) {
+    return verificationError;
   }
 
   var state = db.get();
@@ -67,18 +89,15 @@ var defend = function(key, x, y) {
   };
 };
 
-// setTimeout(function() {
-//   console.log(attack('12wdfcqx'));
-// }, 1000);
-
 var getStatus = function() {
-  var grid = db.get().grid;
+  var state = db.get();
 
   return {
-    width: grid.width || 0,
-    height: grid.height || 0,
-    doubleSquares: grid.doubleSquares || 0,
-    tripleSquares: grid.tripleSquares || 0
+    started: state.gameStarted,
+    width: state.grid.width || 0,
+    height: state.grid.height || 0,
+    doubleSquares: state.grid.doubleSquares || 0,
+    tripleSquares: state.grid.tripleSquares || 0
   };
 };
 
@@ -87,6 +106,7 @@ var loadExistingGame = function() {
 };
 
 module.exports = {
+  init: init,
   start: start,
   attack: attack,
   defend: defend,

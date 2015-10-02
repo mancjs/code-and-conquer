@@ -9,15 +9,18 @@ beforeEach(function() {
 
 describe('game', function() {
   describe('init', function() {
-    it('new game starts with correct state', function() {
+    it('creates game with correct state', function() {
       this.slow(10000);
 
-      game.start({ width: 10, height: 10 });
+      game.init({ width: 10, height: 10 });
 
       var state = db.get();
 
       // registration should be closed by default on new games
       expect(state.registrationOpen).to.be(false);
+
+      // the game should not yet be playable
+      expect(state.gameStarted).to.be(false);
 
       // game time should be within the last 5 seconds
       expect(state.date.getTime()).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
@@ -62,11 +65,17 @@ describe('game', function() {
 
   describe('requests', function() {
     beforeEach(function() {
-      game.start({ width: 5, height: 5 });
+      game.init({ width: 5, height: 5 });
+    });
+
+    it('returns not started error if requests sent before start', function() {
+      var result = game.attack('team-key', 0, 0);
+
+      expect(result.err).to.be('game not started');
     });
 
     it('returns no requests error if team key is invalid', function() {
-      db.get().teams.push({ key: 'key', requests: 0 });
+      game.start();
 
       var result = game.attack('invalid', 0, 0);
 
@@ -81,6 +90,7 @@ describe('game', function() {
 
       state.teams.push(team1, team2);
 
+      game.start();
       game.attack('team-1', 1, 1);
       game.attack('team-1', 1, 1);
 
@@ -98,14 +108,17 @@ describe('game', function() {
     it('returns remaining requests if successful', function() {
       db.get().teams.push({ key: 'team-1', requests: 30 });
 
+      game.start();
       var result = game.attack('team-1', 1, 1);
+
       expect(result.requestsRemaining).to.be(29);
     });
   });
 
   describe('commands', function() {
     beforeEach(function() {
-      game.start({ width: 5, height: 5 });
+      game.init({ width: 5, height: 5 });
+      game.start();
     });
 
     it('returns invalid cell error if coords are invalid', function() {
@@ -193,6 +206,8 @@ describe('game', function() {
       expect(cell.owner.name).to.be('Team 1');
       expect(Object.keys(cell.history.attacks).length).to.be(0);
       expect(Object.keys(cell.history.defends).length).to.be(0);
+
+      //console.log(require('util').inspect(state.grid.cells, {depth:10}));
     });
   });
 });

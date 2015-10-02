@@ -26,6 +26,7 @@ var load = function() {
 var init = function() {
   game = {
     registrationOpen: false,
+    gameStarted: false,
     date: new Date,
     teams: [],
     grid: []
