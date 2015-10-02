@@ -108,7 +108,7 @@ describe('game', function() {
       game.start({ width: 5, height: 5 });
     });
 
-    it('returns invalid cell error if coords are off-grid', function() {
+    it('returns invalid cell error if coords are invalid', function() {
       db.get().teams.push({ key: 'team-1', requests: 1 });
       db.get().teams.push({ key: 'team-2', requests: 1 });
 
@@ -119,7 +119,7 @@ describe('game', function() {
       expect(result2.err).to.be('no cell found at 0,5');
     });
 
-    it('modifies correct cell state for an attack command', function() {
+    it('updates correct cell state for an attack command', function() {
       var state = db.get();
 
       state.teams.push({ key: 'team-1', name: 'Team 1', requests: 30 });
@@ -146,7 +146,7 @@ describe('game', function() {
       expect(cell1.health).to.be(57);
     });
 
-    it('modifies correct cell state for a defend command', function() {
+    it('updates correct cell state for a defend command', function() {
       var state = db.get();
 
       state.teams.push({ key: 'team-1', name: 'Team 1', requests: 30 });
@@ -172,6 +172,27 @@ describe('game', function() {
       expect(cell3.history.attacks['Team 2']).to.be(2);
       expect(cell3.history.defends['Team 1']).to.be(1);
       expect(cell3.health).to.be(59);
+    });
+
+    it('updates correct cell state for change of owner', function() {
+      var state = db.get();
+
+      var cell = grid.getCell(state.grid, 1, 1);
+
+      state.teams.push({ key: 'team-1', name: 'Team 1', requests: 60 });
+
+      for (var i = 0; i < 59; i++) {
+        game.attack('team-1', 1, 1);
+      }
+
+      expect(cell.health).to.be(1);
+
+      game.attack('team-1', 1, 1);
+
+      expect(cell.health).to.be(120);
+      expect(cell.owner.name).to.be('Team 1');
+      expect(Object.keys(cell.history.attacks).length).to.be(0);
+      expect(Object.keys(cell.history.defends).length).to.be(0);
     });
   });
 });
