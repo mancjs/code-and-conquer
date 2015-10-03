@@ -206,6 +206,30 @@ describe('game', function() {
       expect(cell.owner.name).to.be('Team 1');
       expect(Object.keys(cell.history.attacks).length).to.be(0);
       expect(Object.keys(cell.history.defends).length).to.be(0);
+      expect(cell.lastAttack).to.be(undefined);
+    });
+
+    it('updates lastAttack data on cell for each attack command', function() {
+      var state = db.get();
+
+      var cell = grid.getCell(state.grid, 1, 1);
+
+      state.teams.push({ key: 'team-1', name: 'Team 1', colour: 'colour-one', requests: 30 });
+      state.teams.push({ key: 'team-2', name: 'Team 2', colour: 'colour-two', requests: 30 });
+
+      game.attack('team-1', 1, 1);
+
+      expect(cell.health).to.be(59);
+      expect(cell.lastAttack.team.name).to.be('Team 1');
+      expect(cell.lastAttack.team.colour).to.be('colour-one');
+      expect(cell.lastAttack.time).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+
+      game.attack('team-2', 1, 1);
+
+      expect(cell.health).to.be(58);
+      expect(cell.lastAttack.team.name).to.be('Team 2');
+      expect(cell.lastAttack.team.colour).to.be('colour-two');
+      expect(cell.lastAttack.time).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
 
       //console.log(require('util').inspect(state.grid.cells, {depth:10}));
     });

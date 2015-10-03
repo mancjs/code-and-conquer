@@ -78,14 +78,23 @@ var setCellOwner = function(cell, ownerData) {
   cell.owner = ownerData;
   cell.health = 120;
   cell.history = { attacks: {}, defends: {} };
+  delete cell.lastAttack;
 };
 
-var addCellAttackHistory = function(cell, name) {
+var addCellAttackHistory = function(cell, name, colour) {
   if (cell.history.attacks[name] === undefined) {
     cell.history.attacks[name] = 0;
   }
 
   cell.history.attacks[name] += 1;
+
+  cell.lastAttack = {
+    time: new Date().getTime(),
+    team: {
+      name: name,
+      colour: colour
+    }
+  };
 };
 
 var addCellDefendHistory = function(cell, name) {

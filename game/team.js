@@ -6,10 +6,6 @@ var getByKey = function(key) {
   })[0];
 };
 
-var getTeamName = function(key) {
-  return getByKey(key).name;
-};
-
 var hasRequests = function(key) {
   var team = getByKey(key);
   return team && team.requests > 0;
@@ -33,7 +29,7 @@ var getPublicData = function(key) {
 };
 
 module.exports = {
-  getTeamName: getTeamName,
+  getByKey: getByKey,
   hasRequests: hasRequests,
   useRequest: useRequest,
   getRequestsRemaining: getRequestsRemaining,

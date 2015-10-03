@@ -48,7 +48,8 @@ var attack = function(key, x, y) {
     grid.setCellOwner(cell, team.getPublicData(key));
     //events.add(message);
   } else {
-    grid.addCellAttackHistory(cell, team.getTeamName(key));
+    var teamData = team.getByKey(key);
+    grid.addCellAttackHistory(cell, teamData.name, teamData.colour);
   }
 
   team.useRequest(key);
@@ -80,7 +81,7 @@ var defend = function(key, x, y) {
     cell.health = maxHealth;
   }
 
-  grid.addCellDefendHistory(cell, team.getTeamName(key));
+  grid.addCellDefendHistory(cell, team.getByKey(key).name);
 
   team.useRequest(key);
 
