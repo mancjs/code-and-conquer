@@ -15,6 +15,12 @@ var useRequest = function(key) {
   getByKey(key).requests -= 1;
 };
 
+var resetRequests = function() {
+  db.get().teams.forEach(function(team) {
+    team.requests = 30;
+  });
+};
+
 var getRequestsRemaining = function(key) {
   return getByKey(key).requests;
 };
@@ -31,6 +37,7 @@ var getPublicData = function(key) {
 module.exports = {
   hasRequests: hasRequests,
   useRequest: useRequest,
+  resetRequests: resetRequests,
   getRequestsRemaining: getRequestsRemaining,
   getPublicData: getPublicData
 };
