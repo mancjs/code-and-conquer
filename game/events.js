@@ -8,15 +8,28 @@ var getTimestamp = function() {
   }).join(':');
 };
 
-var add = function(message) {
-  events.push(getTimestamp() + ': ' + message);
+var squareConquered = function(args) {
+  var message = [
+    args.newOwner,
+    'conquered cell',
+    args.coords.x + ',' + args.coords.y,
+    'from',
+    args.previousOwner
+  ].join(' ');
+
+  events.push(message);
 };
 
 var getAll = function() {
   return events;
 };
 
+var clear = function() {
+  events = [];
+};
+
 module.exports = {
-  add: add,
-  getAll: getAll
+  squareConquered: squareConquered,
+  getAll: getAll,
+  clear: clear
 };

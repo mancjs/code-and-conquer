@@ -29,7 +29,6 @@ var getPublicData = function(key) {
 };
 
 module.exports = {
-  getByKey: getByKey,
   hasRequests: hasRequests,
   useRequest: useRequest,
   getRequestsRemaining: getRequestsRemaining,

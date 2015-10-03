@@ -2,6 +2,7 @@ var db = require('../db/db');
 var expect = require('expect.js');
 var game = require('../game/game');
 var grid = require('../game/grid');
+var events = require('../game/events');
 
 beforeEach(function() {
   db.init();
@@ -117,6 +118,7 @@ describe('game', function() {
 
   describe('commands', function() {
     beforeEach(function() {
+      events.clear();
       game.init({ width: 5, height: 5 });
       game.start();
     });
@@ -230,8 +232,79 @@ describe('game', function() {
       expect(cell.lastAttack.team.name).to.be('Team 2');
       expect(cell.lastAttack.team.colour).to.be('colour-two');
       expect(cell.lastAttack.time).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+    });
 
-      //console.log(require('util').inspect(state.grid.cells, {depth:10}));
+    it('adds message to event log when cell is conquered', function() {
+      var state = db.get();
+
+      var cell = grid.getCell(state.grid, 1, 1);
+      cell.health = 1;
+
+      state.teams.push({ key: 'team-1', name: 'Team 1', colour: 'colour-one', requests: 30 });
+      state.teams.push({ key: 'team-2', name: 'Team 2', colour: 'colour-two', requests: 30 });
+
+      expect(events.getAll().length).to.be(0);
+
+      game.attack('team-1', 1, 1);
+
+      expect(events.getAll().length).to.be(1);
+      expect(events.getAll()[0]).to.be('Team 1 conquered cell 1,1 from cpu');
+    });
+
+    it('adds message to event log when cell is conquered', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name: 'Team 1', colour: 'colour-one', requests: 60 };
+      var team2 = { key: 'team-2', name: 'Team 2', colour: 'colour-two', requests: 60 };
+      var team3 = { key: 'team-3', name: 'Team 3', colour: 'colour-three', requests: 60 };
+
+      state.teams.push(team1, team2, team3);
+
+      // team-1 attacks cell 0,0 once
+      game.attack('team-1', 0, 0);
+
+      // team-2 attacks cell 0,1 60 times
+      for (var i = 0; i < 60; i++) {
+        game.attack('team-2', 0, 1);
+      }
+
+      // team-3 attacks 0,2 3 times and defends once
+       game.attack('team-3', 0, 2);
+       game.attack('team-3', 0, 2);
+       game.attack('team-3', 0, 2);
+       game.defend('team-3', 0, 2);
+
+       var result = game.query();
+
+       // cell 0,0 has one attack from team-1
+       var cell1 = result.grid[0][0];
+
+       expect(cell1.health).to.be(59);
+       expect(cell1.owner.name).to.be('cpu');
+       expect(cell1.owner.colour).not.be(undefined);
+       expect(Object.keys(cell1.history.attacks).length).to.be(1);
+       expect(Object.keys(cell1.history.defends).length).to.be(0);
+       expect(cell1.history.attacks[team1.name]).to.be(1);
+
+       // cell 0,1 gets conquered by team-2
+       var cell2 = result.grid[1][0];
+
+       expect(cell2.health).to.be(120);
+       expect(cell2.owner.name).to.be('Team 2');
+       expect(cell2.owner.colour).to.be(team2.colour);
+       expect(Object.keys(cell2.history.attacks).length).to.be(0);
+       expect(Object.keys(cell2.history.defends).length).to.be(0);
+
+       // cell 0,2 has three attacks and one defend from team-3
+       var cell3 = result.grid[2][0];
+
+       expect(cell3.health).to.be(58);
+       expect(cell3.owner.name).to.be('cpu');
+       expect(cell3.owner.colour).not.be(undefined);
+       expect(Object.keys(cell3.history.attacks).length).to.be(1);
+       expect(Object.keys(cell3.history.defends).length).to.be(1);
+       expect(cell3.history.attacks[team3.name]).to.be(3);
+       expect(cell3.history.defends[team3.name]).to.be(1);
     });
   });
 });

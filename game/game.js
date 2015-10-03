@@ -2,7 +2,7 @@ var db = require('../db/db');
 var grid = require('./grid');
 var log = require('../lib/log');
 var team = require('./team');
-//var events = require('./events');
+var events = require('./events');
 
 var init = function(gridSize) {
   var state = db.init();
@@ -44,11 +44,17 @@ var attack = function(key, x, y) {
 
   cell.health -= 1;
 
+  var teamData = team.getPublicData(key);
+
   if (cell.health <= 0) {
-    grid.setCellOwner(cell, team.getPublicData(key));
-    //events.add(message);
+    events.squareConquered({
+      coords: { x: x, y: y },
+      previousOwner: cell.owner.name,
+      newOwner: teamData.name
+    });
+
+    grid.setCellOwner(cell, teamData);
   } else {
-    var teamData = team.getByKey(key);
     grid.addCellAttackHistory(cell, teamData.name, teamData.colour);
   }
 
@@ -81,12 +87,20 @@ var defend = function(key, x, y) {
     cell.health = maxHealth;
   }
 
-  grid.addCellDefendHistory(cell, team.getByKey(key).name);
+  grid.addCellDefendHistory(cell, team.getPublicData(key).name);
 
   team.useRequest(key);
 
   return {
     requestsRemaining: team.getRequestsRemaining(key)
+  };
+};
+
+var query = function() {
+  var state = db.get();
+
+  return {
+    grid: state.grid.cells
   };
 };
 
@@ -111,6 +125,7 @@ module.exports = {
   start: start,
   attack: attack,
   defend: defend,
+  query: query,
   getStatus: getStatus,
   loadExistingGame: loadExistingGame
 };
