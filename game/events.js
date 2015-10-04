@@ -17,7 +17,7 @@ var squareConquered = function(args) {
     args.previousOwner
   ].join(' ');
 
-  events.push(message);
+  events.push(getTimestamp() + ' ' + message);
 };
 
 var getAll = function() {

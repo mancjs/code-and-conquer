@@ -1,4 +1,5 @@
 var team = require('./team');
+var log = require('../lib/log');
 
 var interval;
 var lastRefresh;
@@ -11,10 +12,13 @@ var startRefreshTimer = function(refreshRateSecs) {
     if (new Date - lastRefresh >= (refreshRateSecs || 60) * 1000) {
       team.resetRequests();
       lastRefresh = new Date;
+      log('requests', 'replenished all');
     }
   };
 
+  clearInterval(interval);
   interval = setInterval(refresh, 900);
+  log('requests', 'refresh timer started');
 };
 
 var getSecondsUntilNextRefresh = function(args) {
@@ -25,14 +29,9 @@ var getSecondsUntilNextRefresh = function(args) {
   return Math.round(refreshRateSecs - ((currentTime - lastRefreshTime) / 1000));
 };
 
-var stopRefreshTimer = function() {
-  clearInterval(interval);
-};
-
 module.exports = {
   startRefreshTimer: startRefreshTimer,
-  getSecondsUntilNextRefresh: getSecondsUntilNextRefresh,
-  stopRefreshTimer: stopRefreshTimer
+  getSecondsUntilNextRefresh: getSecondsUntilNextRefresh
 };
 
 startRefreshTimer();

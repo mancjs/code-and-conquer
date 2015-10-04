@@ -3,6 +3,7 @@ var grid = require('./grid');
 var log = require('../lib/log');
 var team = require('./team');
 var events = require('./events');
+var requests = require('./requests');
 
 var init = function(gridSize) {
   var state = db.init();
@@ -13,7 +14,12 @@ var init = function(gridSize) {
 
 var start = function() {
   var state = db.get();
+
   state.gameStarted = true;
+
+  if (process.env.NODE_ENV !== 'test') {
+    requests.startRefreshTimer();
+  }
 
   log('game', 'started');
 };

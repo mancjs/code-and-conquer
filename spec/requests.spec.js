@@ -10,10 +10,6 @@ describe('requests', function() {
     state.teams.push({ key: 'team-3', requests: 30 });
   });
 
-  afterEach(function() {
-    requests.stopRefreshTimer();
-  });
-
   it('refreshes all team requests after refresh period @slow', function(done) {
     this.timeout(5000);
 

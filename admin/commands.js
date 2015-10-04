@@ -64,7 +64,7 @@ var getStatus = function() {
     'x3: ' + gameStatus.tripleSquares
   ];
 
-  return values.join(', ');
+  return values.join('\n');
 };
 
 module.exports = {

@@ -248,7 +248,7 @@ describe('game', function() {
       game.attack('team-1', 1, 1);
 
       expect(events.getAll().length).to.be(1);
-      expect(events.getAll()[0]).to.be('Team 1 conquered cell 1,1 from cpu');
+      expect(events.getAll()[0]).to.match(/Team 1 conquered cell 1,1 from cpu/);
     });
 
     it('adds message to event log when cell is conquered', function() {

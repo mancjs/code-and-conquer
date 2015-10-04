@@ -47,9 +47,7 @@ var startServer = function(port) {
       var result = commands[cmd.name](cmd.args);
 
       if (result) {
-        socket.write(cmd.name + ': ' + result + '\n');
-      } else {
-        socket.write(cmd.name + ': OK\n');
+        socket.write(result + '\n');
       }
 
       sendPrompt(socket);
