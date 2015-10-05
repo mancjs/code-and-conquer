@@ -7,7 +7,9 @@ var requests = require('./requests');
 
 var init = function(gridSize) {
   var state = db.init();
+
   state.grid = grid.generate(gridSize.width, gridSize.height);
+  requests.stopRefreshTimer();
 
   log('game', 'initialised with ' + gridSize.width + 'x' + gridSize.height + ' grid');
 };
@@ -22,6 +24,16 @@ var start = function() {
   }
 
   log('game', 'started');
+};
+
+var loadExistingGame = function() {
+  var state = db.load();
+
+  if (state.gameStarted) {
+    requests.startRefreshTimer();
+  }
+
+  log('game', 'loaded game from ' + new Date(state.date));
 };
 
 var verifyTeam = function(key) {
@@ -102,11 +114,12 @@ var defend = function(key, x, y) {
   };
 };
 
-var query = function() {
+var query = function(raw) {
   var state = db.get();
 
   return {
-    grid: state.grid.cells
+    grid: state.grid.cells,
+    gameStarted: state.gameStarted
   };
 };
 
@@ -120,10 +133,6 @@ var getStatus = function() {
     doubleSquares: state.grid.doubleSquares || 0,
     tripleSquares: state.grid.tripleSquares || 0
   };
-};
-
-var loadExistingGame = function() {
-  db.load();
 };
 
 module.exports = {

@@ -16,9 +16,13 @@ var startRefreshTimer = function(refreshRateSecs) {
     }
   };
 
-  clearInterval(interval);
+  stopRefreshTimer();
   interval = setInterval(refresh, 900);
   log('requests', 'refresh timer started');
+};
+
+var stopRefreshTimer = function() {
+  clearInterval(interval);
 };
 
 var getSecondsUntilNextRefresh = function(args) {
@@ -31,7 +35,6 @@ var getSecondsUntilNextRefresh = function(args) {
 
 module.exports = {
   startRefreshTimer: startRefreshTimer,
+  stopRefreshTimer: stopRefreshTimer,
   getSecondsUntilNextRefresh: getSecondsUntilNextRefresh
 };
-
-startRefreshTimer();

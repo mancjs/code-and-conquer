@@ -17,10 +17,11 @@ var get = function() {
 var load = function() {
   if (fs.existsSync(config.database)) {
     game = JSON.parse(fs.readFileSync(config.database, 'utf8'));
-    log('db', 'loaded game from ' + new Date(game.date));
   }
 
   setTimeout(save, config.saveInterval);
+
+  return get();
 };
 
 var init = function() {

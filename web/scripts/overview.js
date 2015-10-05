@@ -1,40 +1,59 @@
 (function() {
   var timer;
-  var $refreshSeconds;
+  var gameState;
   var ticks = 0;
+  var $refreshSeconds;
 
-  var countDownSeconds = function() {
+  var fetchStateUpdate = function(callback) {
+    return http.get('/api/overview-data', function(err, state) {
+      if (!err) {
+        gameState = state;
+
+        if (!gameState.gameStarted) {
+          $refreshSeconds.innerText = 'Game Not Started';
+        } else {
+          $refreshSeconds.innerText = gameState.refreshSeconds;
+        }
+      }
+
+      return callback();
+    });
+  };
+
+  var refresh = function() {
     ticks += 1;
 
-    if (ticks >= 5) {
-      return http.get('/api/overview-data', function(err, data) {
-        if (!err) {
-          document.getElementById('refresh-seconds').innerText = data.refreshSeconds;
-        }
-
+    if (ticks >= 10) {
+      return fetchStateUpdate(function() {
         ticks = 0;
-        return startRefreshCountdownTimer();
+        startRefreshTimer();
       });
     }
 
     var seconds = parseInt($refreshSeconds.innerText) - 1;
 
-    if (seconds <= 0) {
-      seconds = 60;
+    if (!isNaN(seconds)) {
+      if (seconds <= 0) {
+        seconds = 60;
+      }
+
+      $refreshSeconds.innerText = (seconds < 10) ? ('0' + seconds) : seconds;
     }
 
-    $refreshSeconds.innerText = (seconds < 10) ? ('0' + seconds) : seconds;
-
-    return startRefreshCountdownTimer();
+    return startRefreshTimer();
   };
 
-  var startRefreshCountdownTimer = function() {
-    timer = setTimeout(countDownSeconds, 1000);
+  var startRefreshTimer = function() {
+    clearTimeout(timer);
+    timer = setTimeout(refresh, 1000);
   };
 
   var init = function() {
     $refreshSeconds = document.getElementById('refresh-seconds');
-    startRefreshCountdownTimer();
+
+    fetchStateUpdate(function() {
+      return startRefreshTimer();
+    });
   };
 
   init();

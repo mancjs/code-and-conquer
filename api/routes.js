@@ -49,8 +49,11 @@ var overviewData = function(request, response) {
 
 var getOverviewData = function() {
   var refreshSeconds = requests.getSecondsUntilNextRefresh({});
+  var gameData = game.query(true);
 
   return {
+    grid: gameData.grid,
+    gameStarted: gameData.gameStarted,
     refreshSeconds: (refreshSeconds < 10) ? ('0' + refreshSeconds) : refreshSeconds
   };
 };
