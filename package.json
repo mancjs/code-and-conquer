@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node start.js",
-    "test": "NODE_ENV=test mocha --reporter dot --grep @slow --invert spec",
-    "test-all": "NODE_ENV=test mocha --reporter dot spec"
+    "test": "NODE_ENV=test mocha --grep @slow --invert spec",
+    "test-all": "NODE_ENV=test mocha spec"
   },
   "author": "",
   "license": "MIT",

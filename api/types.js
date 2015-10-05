@@ -3,7 +3,8 @@ var tmpl = require('../lib/tmpl');
 
 var templates = {
   'register.html': fs.readFileSync(process.cwd() + '/web/templates/register.html').toString(),
-  'account.html': fs.readFileSync(process.cwd() + '/web/templates/account.html').toString()
+  'account.html': fs.readFileSync(process.cwd() + '/web/templates/account.html').toString(),
+  'overview.html': fs.readFileSync(process.cwd() + '/web/templates/overview.html').toString()
 };
 
 var error = function(code) {
