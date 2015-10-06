@@ -184,6 +184,18 @@ var layMine = function(key, x, y) {
 
   team.useRequest(key);
   roles.useRole(key);
+
+  var mineResult = roles.checkMineTrigger(key, x, y);
+
+  if (mineResult.triggered) {
+    team.useAllRequests(key);
+
+    return {
+      requestsRemaining: team.getRequestsRemaining(key),
+      triggeredMine: { owner: mineResult.owner }
+    };
+  }
+
   roles.setMine(key, x, y);
 
   return {

@@ -419,5 +419,37 @@ describe('game', function() {
       expect(result3.err).to.be(undefined);
       expect(result3.requestsRemaining).to.be(29);
     });
+
+    it('laying mine on top of another mine triggers both', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name:'Team 1', role: 'minelayer', requests: 30 };
+      var team2 = { key: 'team-2', name:'Team 2', role: 'minelayer', requests: 30 };
+
+      state.teams.push(team1, team2);
+
+      var result1 = game.layMine('team-1', 5, 5);
+      expect(result1.err).to.be(undefined);
+      expect(result1.requestsRemaining).to.be(29);
+      expect(state.grid.cells[5][5].health).to.be(60);
+      expect(team1.requests).to.be(29);
+
+      var result2 = game.layMine('team-2', 5, 5);
+      expect(result2.err).to.be(undefined);
+      expect(result2.requestsRemaining).to.be(0);
+      expect(result2.triggeredMine.owner).to.be('Team 1');
+      expect(state.grid.cells[5][5].health).to.be(60);
+      expect(team2.requests).to.be(0);
+
+      expect(state.roleData.mines['5,5'].triggered).to.be(true);
+      expect(state.roleData.mines['5,5'].owner).to.be('Team 1');
+      expect(state.roleData.mines['5,5'].triggeredBy).to.be('Team 2');
+
+      team2.requests = 30;
+
+      var result3 = game.layMine('team-2', 5, 5);
+      expect(result3.err).to.match(/you can only play a role once/);
+      expect(team2.requests).to.be(30);
+    });
   });
 });
