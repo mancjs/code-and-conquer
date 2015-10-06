@@ -210,9 +210,21 @@ var cloak = function(key, cells) {
     return result;
   }
 
-  //var state = db.get();
+  if (cells.length > 3) {
+    return { err: 'cloakers can cloak up to 3 cells max' };
+  }
 
-  // verify coords
+  var state = db.get();
+
+  for (var i = 0; i < cells.length; i++) {
+    var cell = grid.getCell(state.grid, cells[i].x, cells[i].y);
+
+    if (!cell) {
+      return { err: ['no cell found at ', cells[i].x, ',', cells[i].y].join('') };
+    }
+  }
+
+  roles.setCloak(key, cells);
 
   team.useRequest(key);
   roles.useRole(key);

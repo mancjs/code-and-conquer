@@ -389,9 +389,9 @@ describe('game', function() {
     it('wipes player requests when mine is triggered and disables mine', function() {
       var state = db.get();
 
-      var team1 = { key: 'team-1', name:'Team 1', role: 'minelayer', requests: 30 };
-      var team2 = { key: 'team-2', name:'Team 2', role: 'cloaker', requests: 30 };
-      var team3 = { key: 'team-3', name:'Team 3', role: 'spy', requests: 30 };
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'minelayer', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'cloaker', requests: 30 };
+      var team3 = { key: 'team-3', name: 'Team 3', role: 'spy', requests: 30 };
 
       state.teams.push(team1, team2, team3);
 
@@ -423,8 +423,8 @@ describe('game', function() {
     it('laying mine on top of another mine triggers both', function() {
       var state = db.get();
 
-      var team1 = { key: 'team-1', name:'Team 1', role: 'minelayer', requests: 30 };
-      var team2 = { key: 'team-2', name:'Team 2', role: 'minelayer', requests: 30 };
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'minelayer', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'minelayer', requests: 30 };
 
       state.teams.push(team1, team2);
 
@@ -450,6 +450,82 @@ describe('game', function() {
       var result3 = game.layMine('team-2', 5, 5);
       expect(result3.err).to.match(/you can only play a role once/);
       expect(team2.requests).to.be(30);
+    });
+
+    it('applying cloak to more than 3 cells fails', function() {
+      var state = db.get();
+
+      var team = { key: 'team-1', name: 'Team 1', role: 'cloaker', requests: 30 };
+
+      state.teams.push(team);
+
+      var cells = [
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+        { x: 2, y: 2 },
+        { x: 3, y: 3 }
+      ];
+
+      var result = game.cloak('team-1', cells);
+      expect(result.err).to.match(/cloakers can cloak up to 3 cells max/);
+      expect(team.requests).to.be(30);
+    });
+
+    it('applying cloak to invalid cells fails', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'cloaker', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'cloaker', requests: 30 };
+
+      state.teams.push(team1, team2);
+
+      var cells1 = [
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+        { x: 2, y: 42 }
+      ];
+
+      var result1 = game.cloak('team-1', cells1);
+      expect(result1.err).to.match(/no cell found at 2,42/);
+      expect(team1.requests).to.be(30);
+
+      var cells2 = [
+        { x: 12, y: 0 },
+        { x: 1, y: 1 },
+        { x: 2, y: 42 }
+      ];
+
+      var result2 = game.cloak('team-2', cells2);
+      expect(result2.err).to.match(/no cell found at 12,0/);
+      expect(team2.requests).to.be(30);
+    });
+
+    it('applying cloak to cells stores correct role state', function() {
+      var state = db.get();
+
+      var team = { key: 'team-1', name: 'Team 1', role: 'cloaker', roleUsed: false, requests: 30 };
+
+      state.teams.push(team);
+
+      var cells = [
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+        { x: 2, y: 2 }
+      ];
+
+      var result = game.cloak('team-1', cells);
+      expect(result.err).to.be(undefined);
+      expect(team.requests).to.be(29);
+
+      expect(state.roleData.cloaks['0,0'].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+      expect(state.roleData.cloaks['1,1'].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+      expect(state.roleData.cloaks['2,2'].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+
+      expect(state.roleData.cloaks['0,0'].owner).to.be('Team 1');
+      expect(state.roleData.cloaks['1,1'].owner).to.be('Team 1');
+      expect(state.roleData.cloaks['2,2'].owner).to.be('Team 1');
+
+      expect(team.roleUsed).to.be(true);
     });
   });
 });

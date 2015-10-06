@@ -45,10 +45,24 @@ var checkMineTrigger = function(key, x, y) {
   };
 };
 
+var setCloak = function(key, cells) {
+  if (!cells.length) {
+    return;
+  }
+
+  var state = db.get();
+  var team = getTeamByKey(key);
+
+  cells.forEach(function(cell) {
+    state.roleData.cloaks[cell.x + ',' + cell.y] = { cloakTime: new Date().getTime(), owner: team.name };
+  });
+};
+
 module.exports = {
   verify: verify,
   useRole: useRole,
   roleUsed: roleUsed,
   setMine: setMine,
-  checkMineTrigger: checkMineTrigger
+  checkMineTrigger: checkMineTrigger,
+  setCloak: setCloak
 };

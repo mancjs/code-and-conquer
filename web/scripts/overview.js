@@ -27,9 +27,6 @@
       return fetchStateUpdate(function() {
         ticks = 0;
         startRefreshTimer();
-
-        // console.log('gameState', gameState);
-
         window.buildGrid(gameState.grid);
       });
     }
@@ -56,6 +53,7 @@
     $refreshSeconds = document.getElementById('refresh-seconds');
 
     fetchStateUpdate(function() {
+      window.buildGrid(gameState.grid);
       return startRefreshTimer();
     });
   };
