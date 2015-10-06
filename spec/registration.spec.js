@@ -108,7 +108,7 @@ describe('registration', function() {
     registration.open();
 
     var response = registration.createTeam('Team Name', 'user@host.com', 'spy');
-    var validKeys = ['key', 'gravatar', 'colour', 'role', 'name', 'email', 'requests'];
+    var validKeys = ['key', 'gravatar', 'colour', 'roleUsed', 'role', 'name', 'email', 'requests'];
 
     expect(response.err).to.be(undefined);
     expect(response.team).to.only.have.keys(validKeys);

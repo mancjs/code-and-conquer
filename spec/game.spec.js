@@ -307,4 +307,117 @@ describe('game', function() {
        expect(cell3.history.defends[team3.name]).to.be(1);
     });
   });
+
+  describe('roles', function() {
+    beforeEach(function() {
+      events.clear();
+      game.init({ width: 10, height: 10 });
+      game.start();
+    });
+
+    it('fails if team plays a role they do not own', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', role: 'minelayer', requests: 1 };
+      var team2 = { key: 'team-2', role: 'cloaker', requests: 1 };
+      var team3 = { key: 'team-3', role: 'spy', requests: 1 };
+
+      state.teams.push(team1, team2, team3);
+
+      var result1 = game.layMine(team3.key, 0, 0);
+      expect(result1.err).to.match(/you are not a minelayer/);
+
+      var result2 = game.cloak(team1.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
+      expect(result2.err).to.match(/you are not a cloaker/);
+
+      var result3 = game.spy(team2.key, team1.name);
+      expect(result3.err).to.match(/you are not a spy/);
+    });
+
+    it('only allows a role to be played once', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', role: 'minelayer', requests: 2 };
+      var team2 = { key: 'team-2', role: 'cloaker', requests: 2 };
+      var team3 = { key: 'team-3', role: 'spy', requests: 2 };
+
+      state.teams.push(team1, team2, team3);
+
+      var result1 = game.layMine(team1.key, 0, 0);
+      expect(result1.err).to.be(undefined);
+      expect(result1.requestsRemaining).to.be(1);
+
+      var error1 = game.layMine(team1.key, 0, 0);
+      expect(error1.err).to.match(/you can only play a role once/);
+
+      var result2 = game.cloak(team2.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
+      expect(result2.err).to.be(undefined);
+      expect(result2.requestsRemaining).to.be(1);
+
+      var error2 = game.cloak(team2.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
+      expect(error2.err).to.match(/you can only play a role once/);
+
+      var result3 = game.spy(team3.key, team1.name);
+      expect(result3.err).to.be(undefined);
+      expect(result3.requestsRemaining).to.be(1);
+
+      var error3 = game.spy(team3.key, team1.name);
+      expect(error3.err).to.match(/you can only play a role once/);
+    });
+
+    it('rejects mine lays at invalid cells', function() {
+      var state = db.get();
+
+      state.teams.push({ key: 'team-1', role: 'minelayer', requests: 1 });
+
+      var result = game.layMine('team-1', 42, 42);
+      expect(result.err).to.match(/no cell found at 42,42/);
+    });
+
+    it('stores successful mine lay in state', function() {
+      var state = db.get();
+
+      state.teams.push({ key: 'team-1', name: 'Team 1', role: 'minelayer', requests: 1 });
+
+      var result = game.layMine('team-1', 4, 5);
+
+      expect(result.err).to.be(undefined);
+      expect(state.roleData.mines['4,5'].owner).to.be('Team 1');
+      expect(state.roleData.mines['4,5'].triggered).to.be(false);
+    });
+
+    it('wipes player requests when mine is triggered and disables mine', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name:'Team 1', role: 'minelayer', requests: 30 };
+      var team2 = { key: 'team-2', name:'Team 2', role: 'cloaker', requests: 30 };
+      var team3 = { key: 'team-3', name:'Team 3', role: 'spy', requests: 30 };
+
+      state.teams.push(team1, team2, team3);
+
+      var result1 = game.layMine('team-1', 2, 2);
+      expect(result1.err).to.be(undefined);
+      expect(result1.requestsRemaining).to.be(29);
+      expect(state.grid.cells[2][2].health).to.be(60);
+
+      expect(state.roleData.mines['2,2'].triggered).to.be(false);
+      expect(state.roleData.mines['2,2'].owner).to.be('Team 1');
+      expect(state.roleData.mines['2,2'].triggeredBy).to.be(undefined);
+
+      var result2 = game.defend('team-2', 2, 2);
+      expect(result2.err).to.be(undefined);
+      expect(result2.requestsRemaining).to.be(0);
+      expect(result2.triggeredMine.owner).to.be('Team 1');
+      expect(state.grid.cells[2][2].health).to.be(60);
+      expect(team2.requests).to.be(0);
+
+      expect(state.roleData.mines['2,2'].triggered).to.be(true);
+      expect(state.roleData.mines['2,2'].owner).to.be('Team 1');
+      expect(state.roleData.mines['2,2'].triggeredBy).to.be('Team 2');
+
+      var result3 = game.attack('team-3', 2, 2);
+      expect(result3.err).to.be(undefined);
+      expect(result3.requestsRemaining).to.be(29);
+    });
+  });
 });

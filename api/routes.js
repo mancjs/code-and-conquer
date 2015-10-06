@@ -46,9 +46,12 @@ var accountData = function(request, response) {
     return response(types.redirect('/'));
   }
 
+  var teams = registration.getTeamNames();
+
   return response(types.json({
-    grid: game.query().grid,
-    requests: team.requests
+    teams: teams,
+    requests: team.requests,
+    grid: game.query().grid
   }));
 };
 

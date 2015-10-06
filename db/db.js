@@ -29,6 +29,11 @@ var init = function() {
     registrationOpen: false,
     gameStarted: false,
     date: new Date,
+    roleData: {
+      mines: {},
+      cloaks: {},
+      redirects: {}
+    },
     teams: [],
     grid: []
   };

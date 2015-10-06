@@ -95,6 +95,48 @@ var simulate = function() {
   }
 };
 
+var getScores = function() {
+  var state = db.get();
+
+  var teams = {};
+
+  state.grid.cells.forEach(function(row) {
+    row.forEach(function(cell) {
+      var key = cell.owner.name;
+
+      if (key === 'cpu') {
+        return;
+      }
+
+      if (!teams[key]) {
+        teams[key] = { name: key, score: 0 };
+      }
+
+      teams[key].score += (1 * cell.bonus);
+    });
+  });
+
+  teams = Object.keys(teams).map(function(key) {
+    return teams[key];
+  });
+
+  teams.sort(function(left, right) {
+    return right.score - left.score;
+  });
+
+  var position = 1;
+  var lastScore;
+
+  return teams.map(function(team) {
+    if (lastScore && (team.score < lastScore)) {
+      position += 1;
+    }
+
+    lastScore = team.score;
+    return position + ': ' + team.name + ', score: ' + team.score;
+  }).join('\n');
+};
+
 module.exports = {
   'init-game': initGame,
   'start-game': startGame,
@@ -103,5 +145,6 @@ module.exports = {
   'get-teams': getTeams,
   'del-team': deleteTeam,
   'status': getStatus,
+  'scores': getScores,
   'simulate': simulate
 };

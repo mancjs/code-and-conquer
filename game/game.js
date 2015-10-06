@@ -2,6 +2,7 @@ var db = require('../db/db');
 var grid = require('./grid');
 var log = require('../lib/log');
 var team = require('./team');
+var roles = require('./roles');
 var events = require('./events');
 var requests = require('./requests');
 
@@ -60,6 +61,17 @@ var attack = function(key, x, y) {
     return { err: ['no cell found at ', x, ',', y].join('') };
   }
 
+  var mineResult = roles.checkMineTrigger(key, x, y);
+
+  if (mineResult.triggered) {
+    team.useAllRequests(key);
+
+    return {
+      requestsRemaining: team.getRequestsRemaining(key),
+      triggeredMine: { owner: mineResult.owner }
+    };
+  }
+
   cell.health -= 1;
 
   var teamData = team.getPublicData(key);
@@ -97,6 +109,17 @@ var defend = function(key, x, y) {
     return { err: ['no cell found at ', x, ',', y].join('') };
   }
 
+  var mineResult = roles.checkMineTrigger(key, x, y);
+
+  if (mineResult.triggered) {
+    team.useAllRequests(key);
+
+    return {
+      requestsRemaining: team.getRequestsRemaining(key),
+      triggeredMine: { owner: mineResult.owner }
+    };
+  }
+
   cell.health += 1;
 
   var maxHealth = (cell.owner.name === 'cpu') ? 60 : 120;
@@ -117,9 +140,92 @@ var defend = function(key, x, y) {
 var query = function() {
   var state = db.get();
 
+  // clone this before modification
+
   return {
     grid: state.grid.cells,
     gameStarted: state.gameStarted
+  };
+};
+
+var roleVerify = function(key, role) {
+  var verificationError = verifyTeam(key);
+
+  if (verificationError) {
+    return verificationError;
+  }
+
+  if (!roles.verify(key, role)) {
+    return { err: 'you are not a ' + role };
+  }
+
+  if (roles.roleUsed(key)) {
+    return { err: 'you can only play a role once' };
+  }
+
+  return {
+    ok: true
+  };
+};
+
+var layMine = function(key, x, y) {
+  var result = roleVerify(key, 'minelayer');
+
+  if (result.err) {
+    return result;
+  }
+
+  var state = db.get();
+  var cell = grid.getCell(state.grid, x, y);
+
+  if (!cell) {
+    return { err: ['no cell found at ', x, ',', y].join('') };
+  }
+
+  team.useRequest(key);
+  roles.useRole(key);
+  roles.setMine(key, x, y);
+
+  return {
+    requestsRemaining: team.getRequestsRemaining(key)
+  };
+};
+
+var cloak = function(key, cells) {
+  var result = roleVerify(key, 'cloaker');
+
+  if (result.err) {
+    return result;
+  }
+
+  //var state = db.get();
+
+  // verify coords
+
+  team.useRequest(key);
+  roles.useRole(key);
+
+  return {
+    requestsRemaining: team.getRequestsRemaining(key)
+  };
+};
+
+var spy = function(key, teamName) {
+  var result = roleVerify(key, 'spy');
+
+  if (result.err) {
+    return result;
+  }
+
+  //var state = db.get();
+
+  // do spy
+
+  team.useRequest(key);
+  roles.useRole(key);
+
+  return {
+    requestsRemaining: team.getRequestsRemaining(key)
   };
 };
 
@@ -141,6 +247,9 @@ module.exports = {
   attack: attack,
   defend: defend,
   query: query,
+  layMine: layMine,
+  cloak: cloak,
+  spy: spy,
   getStatus: getStatus,
   loadExistingGame: loadExistingGame
 };

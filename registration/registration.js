@@ -34,6 +34,16 @@ var getTeamByKey = function(key) {
   return matches[0];
 };
 
+var getTeamNames = function() {
+  return db.get().teams.map(function(team) {
+    return {
+      name: team.name,
+      colour: team.colour,
+      gravatar: team.gravatar
+    };
+  });
+};
+
 var getAllTeams = function() {
   return db.get().teams.map(function(team) {
     return {
@@ -59,6 +69,7 @@ var createTeam = function(name, email, role) {
     key: createKey(),
     gravatar: getGravatarUrl(email),
     colour: colours.get(db.get().teams.length),
+    roleUsed: false,
     role: role,
     name: name,
     email: email,
@@ -130,6 +141,7 @@ module.exports = {
   open: open,
   close: close,
   getTeamByKey: getTeamByKey,
+  getTeamNames: getTeamNames,
   getAllTeams: getAllTeams,
   createTeam: createTeam,
   deleteTeam: deleteTeam,

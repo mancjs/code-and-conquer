@@ -1,20 +1,36 @@
 (function() {
   var $selectedCell;
+  var $playerList;
+  var $ownedSquares;
+  var $freeSquares;
   var $grid;
 
+  var teams;
+  var ownedSquares = 0;
+  var freeSquares = 0;
+
   var init = function() {
+    $playerList = document.getElementById('player-list');
     $grid = document.getElementById('user-grid');
+    $ownedSquares = document.getElementById('owned-squares');
+    $freeSquares = document.getElementById('free-squares');
+
     initialiseGridClickHandler($grid);
     setTimeout(fetchAccountData, 1000);
   };
 
   var fetchAccountData = function() {
-    http.get('/api/account-data?key=' + window.userKey, function(err, accountData) {
+    http.get('/api/account-data?key=' + window.myKey, function(err, accountData) {
       if (err) {
         return;
       }
 
+      buildTeamsList(accountData.teams, accountData.grid);
       drawGrid($grid, accountData.grid);
+      drawPlayers();
+
+      $ownedSquares.innerText = ownedSquares;
+      $freeSquares.innerText = freeSquares;
     });
   };
 
@@ -22,6 +38,37 @@
     var $element = document.createElement(tag);
     $element.className = className;
     return $element;
+  };
+
+  var buildTeamsList = function(teamData, grid) {
+    teams = {};
+    ownedSquares = 0;
+    freeSquares = 0;
+
+    teamData.forEach(function(team) {
+      teams[team.name] = {
+        gravatar: team.gravatar,
+        colour: team.colour,
+        name: team.name,
+        score: 0
+      };
+    });
+
+    grid.forEach(function(row) {
+      row.forEach(function(cell) {
+        if (cell.owner.name === window.myName) {
+          ownedSquares += 1;
+        }
+
+        if (cell.owner.name === 'cpu') {
+          freeSquares += 1;
+        }
+
+        if (teams[cell.owner.name]) {
+          teams[cell.owner.name].score += (1 * cell.bonus);
+        }
+      });
+    });
   };
 
   var drawGrid = function($grid, state) {
@@ -53,6 +100,33 @@
       var $rowContainer = createElement('div', 'row-container');
       $rowContainer.appendChild($row);
       $grid.appendChild($rowContainer);
+    });
+  };
+
+  var drawPlayers = function() {
+    var allTeams = [];
+
+    Object.keys(teams).forEach(function(teamName) {
+      allTeams.push(teams[teamName]);
+    });
+
+    allTeams.sort(function(left, right) {
+      return right.score - left.score;
+    });
+
+    allTeams.forEach(function(player) {
+      var $player = createElement('div', 'player');
+
+      var $avatar = createElement('img');
+      $avatar.src = player.gravatar;
+
+      var $score = createElement('div', 'score');
+      $score.innerText = player.score;
+
+      $player.appendChild($avatar);
+      $player.appendChild($score);
+
+      $playerList.appendChild($player);
     });
   };
 
