@@ -39,6 +39,19 @@ var account = function(request, response) {
   return response(types.template('account.html', model));
 };
 
+var accountData = function(request, response) {
+  var team = registration.getTeamByKey(request.query.key);
+
+  if (!team) {
+    return response(types.redirect('/'));
+  }
+
+  return response(types.json({
+    grid: game.query().grid,
+    requests: team.requests
+  }));
+};
+
 var overview = function(request, response) {
   return response(types.template('overview.html', getOverviewData()));
 };
@@ -49,7 +62,7 @@ var overviewData = function(request, response) {
 
 var getOverviewData = function() {
   var refreshSeconds = requests.getSecondsUntilNextRefresh({});
-  var gameData = game.query(true);
+  var gameData = game.query();
 
   return {
     grid: gameData.grid,
@@ -63,6 +76,7 @@ module.exports = {
   'GET /register': register,
   'POST /register': registerTeam,
   'GET /account': account,
+  'GET /api/account-data': accountData,
   'GET /overview': overview,
   'GET /api/overview-data': overviewData
 };

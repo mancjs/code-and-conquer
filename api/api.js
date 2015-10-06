@@ -28,8 +28,13 @@ var buildRequestObject = function(req, callback) {
   var requestData = {
     url: parts[0],
     key: req.method + ' ' + parts[0],
-    query: parts[1] && querystring.parse(parts[1])
+    query: querystring.parse(parts[1]),
+    body: {}
   };
+
+  if (!requestData.query) {
+    requestData.query = {};
+  }
 
   if (req.method !== 'POST') {
     return callback(requestData);
@@ -49,7 +54,9 @@ var buildRequestObject = function(req, callback) {
   req.on('end', function() {
     try {
       requestData.body = JSON.parse(jsonString);
-    } catch (err) {}
+    } catch (err) {
+      requestData.body = {};
+    }
 
     return callback(requestData);
   });

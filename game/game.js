@@ -114,7 +114,7 @@ var defend = function(key, x, y) {
   };
 };
 
-var query = function(raw) {
+var query = function() {
   var state = db.get();
 
   return {

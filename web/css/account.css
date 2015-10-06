@@ -4,7 +4,7 @@ body {
   width: 100%;
   height: 100%;
   color: #f9eed1;
-  font-family: 'Georgia';
+  font-family: 'Inconsolata';
   background: rgba(54, 53, 60, 1) url('/images/tiles/tile.png') repeat;
   background-size: 798px 798px;
 }
@@ -66,7 +66,7 @@ input:focus, textarea:focus {
   color: #f9eed1;
   font-size: 24px;
   font-weight: 300;
-  font-family: 'Georgia';
+  font-family: 'Inconsolata';
   padding: 0;
   margin: 0;
   text-align: center;
@@ -95,7 +95,7 @@ input:focus, textarea:focus {
   color: #f9eed1;
   background: #2a2930;
   text-align: center;
-  font-family: 'Courier New';
+  font-family: 'Inconsolata';
 }
 
 .data-row .value #team-colour {
@@ -117,17 +117,34 @@ input:focus, textarea:focus {
 }
 
 .grid-info #cell-info {
+  display: inline-block;
   background: #2a2930;
-  margin: 15px 0 0 0;
+  margin: 15px auto 0 auto;
   display: none;
-  height: 0;
   padding: 10px;
   overflow: hidden;
   box-sizing: border-box;
-  -webkit-transition: all 0.25s ease-out;
-  -moz-transition: all 0.25s ease-out;
-  -o-transition: all 0.25s ease-out;
-  transition: all 0.25s ease-out;
+  font-family: 'Inconsolata';
+  font-size: 14px;
+}
+
+.grid-info #cell-info .cell-coords {
+  line-height: 20px;
+}
+
+.grid-info #cell-info .cell-owner {
+  margin-top: 5px;
+  line-height: 20px;
+}
+
+.grid-info #cell-info .cell-owner .owner-dot {
+  display: inline-block;
+  background: red;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin-bottom: 1px;
+  vertical-align: middle;
 }
 
 .grid-info .grid {
@@ -186,15 +203,16 @@ input:focus, textarea:focus {
 }
 
 .account-container .players .player .score {
-  width: 50px;
-  height: 35px;
-  line-height: 40px;
+  width: 44px;
+  /*height: 30px;*/
+  /*line-height: 40px;*/
+  padding: 10px 0 5px 0;
   text-align: center;
   border-radius: 2px;
   background: rgba(54, 53, 60, 1);
   position: absolute;
   bottom: -20px;
-  left: 30px;
+  left: 28px;
 }
 
 .account-container .players .player img {

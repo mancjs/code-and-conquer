@@ -4,7 +4,7 @@ body {
   width: 100%;
   height: 100%;
   color: #f9eed1;
-  font-family: 'Georgia';
+  font-family: 'Inconsolata';
   background: rgba(54, 53, 60, 1) url('/images/tiles/tile.png') repeat;
   background-size: 798px 798px;
   -webkit-touch-callout: none;
@@ -72,7 +72,7 @@ input:focus, textarea:focus {
 }
 
 .reg-container .roles-container .role-container .role {
-  width: 575px;
+  width: 650px;
   margin: 0px auto;
   box-sizing: border-box;
   background: #36353C;
@@ -89,7 +89,7 @@ input:focus, textarea:focus {
   height: 100%;
   line-height: 350px;
   font-size: 200px;
-  font-family: 'arial';
+  font-family: 'Arial';
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
   -o-transition: all 0.1s ease-in-out;
@@ -105,7 +105,7 @@ input:focus, textarea:focus {
   height: 100%;
   line-height: 350px;
   font-size: 200px;
-  font-family: 'arial';
+  font-family: 'Arial';
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
   -o-transition: all 0.1s ease-in-out;
@@ -151,6 +151,7 @@ input:focus, textarea:focus {
 .role .header .title {
   color: #f9eed1;
   font-size: 26px;
+  font-weight: 700;
   padding-bottom: 5px;
 }
 
@@ -173,12 +174,12 @@ input:focus, textarea:focus {
   color: #e05050;
   font-size: 18px;
   line-height: 22px;
-  font-family: 'Georgia';
+  font-family: 'Inconsolata';
   border-left: solid 3px #e05050;
 }
 
 .role .form input[type='text'] {
-  font-family: 'Georgia';
+  font-family: 'Inconsolata';
   display: block;
   padding: 15px;
   margin: 15px auto;
@@ -197,7 +198,8 @@ input:focus, textarea:focus {
   margin: 15px auto;
   line-height: 22px;
   font-size: 17px;
-  font-family: 'Georgia';
+  font-family: 'Inconsolata';
+  font-weight: 900;
   background: #f9eed1;
   color: #323138;
   width: 430px;

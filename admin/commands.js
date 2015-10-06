@@ -1,5 +1,6 @@
-var registration = require('../registration/registration');
+var db = require('../db/db');
 var game = require('../game/game');
+var registration = require('../registration/registration');
 
 var initGame = function(args) {
   if (!args || args.indexOf('x') === -1) {
@@ -67,6 +68,33 @@ var getStatus = function() {
   return values.join('\n');
 };
 
+var simulate = function() {
+  db.init();
+  game.init({ width: 8, height: 8 });
+  registration.open();
+
+  var result1 = registration.createTeam('Team 1', 'a@b.c1', 'minelayer');
+  var result2 = registration.createTeam('Team 2', 'a@b.c2', 'minelayer');
+  var result3 = registration.createTeam('Team 3', 'a@b.c3', 'spy');
+  var result4 = registration.createTeam('Team 4', 'a@b.c4', 'spy');
+  var result5 = registration.createTeam('Team 5', 'a@b.c5', 'cloaker');
+  var result6 = registration.createTeam('Team 6', 'a@b.c6', 'cloaker');
+
+  var teams = [result1.team, result2.team, result3.team, result4.team, result5.team, result6.team];
+
+  startGame();
+
+  var state = db.get();
+
+  for (var i = 0; i < 40; i++) {
+    var x = Math.floor(Math.random() * 8);
+    var y = Math.floor(Math.random() * 8);
+
+    state.grid.cells[y][x].health = 1;
+    game.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
+  }
+};
+
 module.exports = {
   'init-game': initGame,
   'start-game': startGame,
@@ -74,5 +102,6 @@ module.exports = {
   'close-reg': closeRegistration,
   'get-teams': getTeams,
   'del-team': deleteTeam,
-  'status': getStatus
+  'status': getStatus,
+  'simulate': simulate
 };

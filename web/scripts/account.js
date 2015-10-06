@@ -1,26 +1,21 @@
 (function() {
   var $selectedCell;
+  var $grid;
 
   var init = function() {
-    var state = [
-      [0,0,0,0,0,1,0,0,1,0,1,1],
-      [0,1,0,1,0,0,1,0,0,0,1,1],
-      [0,1,0,1,1,1,1,0,0,1,1,1],
-      [0,0,0,0,0,0,0,0,0,1,1,1],
-      [0,0,0,0,1,1,1,1,0,0,1,1],
-      [0,0,0,0,1,0,0,0,1,0,1,1],
-      [0,0,0,0,1,1,1,0,0,0,1,1],
-      [0,0,0,0,1,0,0,1,1,0,1,1],
-      [0,0,0,0,1,0,0,0,0,0,1,1],
-      [0,0,0,0,1,1,1,1,1,0,1,1],
-      [0,0,0,0,1,0,0,1,0,0,0,0],
-      [0,0,0,0,1,0,0,1,0,0,0,0]
-    ];
-
-    var $grid = document.getElementById('user-grid');
-
-    drawGrid($grid, state);
+    $grid = document.getElementById('user-grid');
     initialiseGridClickHandler($grid);
+    setTimeout(fetchAccountData, 1000);
+  };
+
+  var fetchAccountData = function() {
+    http.get('/api/account-data?key=' + window.userKey, function(err, accountData) {
+      if (err) {
+        return;
+      }
+
+      drawGrid($grid, accountData.grid);
+    });
   };
 
   var createElement = function(tag, className) {
@@ -30,17 +25,25 @@
   };
 
   var drawGrid = function($grid, state) {
-    state.forEach(function(row) {
+    state.forEach(function(row, y) {
       var $row = createElement('div', 'row');
 
-      row.forEach(function(isOwned) {
+      row.forEach(function(cell, x) {
+        var cellData = {
+          coords: x + ',' + y,
+          owner: {
+            name: cell.owner.name,
+            colour: cell.owner.colour
+          }
+        };
+
         var $cell = createElement('div', 'cell');
 
-        $cell.setAttribute('cell-data', 'abcd');
+        $cell.setAttribute('cell-data', JSON.stringify(cellData));
 
-        if (isOwned) {
+        if (cell.owner.name !== 'cpu') {
           var $dot = createElement('div', 'dot');
-          $dot.style.background = document.getElementById('team-colour').style.background;
+          $dot.style.background = cell.owner.colour;
           $cell.appendChild($dot);
         }
 
@@ -61,14 +64,20 @@
 
       $selectedCell = $cell;
       $selectedCell.className = 'cell selected';
-      console.log($selectedCell.getAttribute('cell-data'));
+
+      var cellData = JSON.parse($selectedCell.getAttribute('cell-data'));
 
       var $cellInfo = document.getElementById('cell-info');
-      $cellInfo.style.display = 'block';
+      var $cellCoords = document.getElementById('cell-coords');
+      var $cellOwner = document.getElementById('cell-owner');
+      var $cellOwnerDot = document.getElementById('cell-owner-dot');
 
-      window.requestAnimationFrame(function() {
-        $cellInfo.style.height = '100px';
-      });
+      $cellCoords.innerText = cellData.coords;
+      $cellOwner.innerText = cellData.owner.name;
+      $cellOwnerDot.style.background = (cellData.owner.name === 'cpu') ? '#f9eed1' : cellData.owner.colour;
+
+      $cellInfo.style.display = 'block';
+      $cellInfo.style.width = $cell.parentNode.clientWidth + 'px';
     };
 
     $grid.addEventListener('click', function(event) {
