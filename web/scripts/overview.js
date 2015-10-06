@@ -27,6 +27,10 @@
       return fetchStateUpdate(function() {
         ticks = 0;
         startRefreshTimer();
+
+        // console.log('gameState', gameState);
+
+        window.buildGrid(gameState.grid);
       });
     }
 
