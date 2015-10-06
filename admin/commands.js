@@ -92,6 +92,10 @@ var simulate = function() {
 
     state.grid.cells[y][x].health = 1;
     game.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
+
+    if (i % 2 === 0) {
+      game.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
+    }
   }
 };
 
