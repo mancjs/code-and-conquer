@@ -404,6 +404,7 @@ describe('game', function() {
       expect(state.roleData.mines['2,2'].triggered).to.be(false);
       expect(state.roleData.mines['2,2'].owner).to.be('Team 1');
       expect(state.roleData.mines['2,2'].triggeredBy).to.be(undefined);
+      expect(team1.mineSetAt).to.be('2,2');
 
       var result2 = game.defend('team-2', 2, 2);
       expect(result2.err).to.be(undefined);

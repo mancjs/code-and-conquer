@@ -49,6 +49,7 @@ var getAllTeams = function() {
     return {
       key: team.key,
       name: team.name,
+      role: team.role,
       requests: team.requests
     };
   });

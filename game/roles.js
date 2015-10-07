@@ -34,6 +34,7 @@ var setMine = function(key, x, y) {
   var team = getTeamByKey(key);
 
   state.roleData.mines[x + ',' + y] = { triggered: false, owner: team.name };
+  team.mineSetAt = x + ',' + y;
 
   log('roles', team.name + ' set mine at ' + x + ',' + y);
 };

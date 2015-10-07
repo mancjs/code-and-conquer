@@ -56,11 +56,19 @@
                 <div class="key">Role Used</div>
                 <div class="value">{{= team.roleUsed ? 'yes' : 'no' }}</div>
               </div>
+
+              {{ if (team.mineSetAt) { }}
+              <div class="data-row">
+                <div class="key">Set At</div>
+                <div class="value">{{= team.mineSetAt }}</div>
+              </div>
+              {{ } }}
+
             </div>
 
             {{ if (team.mineTriggeredBy) { }}
               <div class="role-activation-info">
-                Mine Triggered By <br /><b>{{= team.mineTriggeredBy }}</b>
+                Mine set off by <br /><b>{{= team.mineTriggeredBy }}</b>
               </div>
             {{ } }}
 

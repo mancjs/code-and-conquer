@@ -33,7 +33,7 @@ var getTeams = function() {
   var teams = registration.getAllTeams();
 
   var lines = teams.map(function(team) {
-    return team.key + ': ' + team.name + ' [' + team.requests + ']';
+    return team.key + ': ' + team.name + ' [' + team.role + '] [' + team.requests + ']';
   }).join('\n');
 
   var response = teams.length + ' total';

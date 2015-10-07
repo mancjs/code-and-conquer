@@ -74,21 +74,29 @@ var getOverviewData = function() {
   };
 };
 
-var attack = function(request, response) {
+var verifySingleCellRequest = function(request) {
   if (!request.body) {
-    return response(types.json({ err: 'no data sent to request' }));
+    return { err: 'no data sent to request' };
   }
 
   if (!request.body.key) {
-    return response(types.json({ err: 'no key specified' }));
+    return { err: 'no key specified' };
   }
 
-  if (!request.body.x) {
-    return response(types.json({ err: 'no x grid coordinate specified' }));
+  if (request.body.x === undefined) {
+    return { err: 'no x grid coordinate specified' };
   }
 
-  if (!request.body.y) {
-    return response(types.json({ err: 'no y grid coordinate specified' }));
+  if (request.body.y === undefined) {
+    return { err: 'no y grid coordinate specified' };
+  }
+};
+
+var attack = function(request, response) {
+  var verificationError = verifySingleCellRequest(request);
+
+  if (verificationError) {
+    return response(types.json(verificationError));
   }
 
   var result = game.attack(request.body.key, request.body.x, request.body.y);
@@ -96,20 +104,10 @@ var attack = function(request, response) {
 };
 
 var defend = function(request, response) {
-  if (!request.body) {
-    return response(types.json({ err: 'no data sent to request' }));
-  }
+  var verificationError = verifySingleCellRequest(request);
 
-  if (!request.body.key) {
-    return response(types.json({ err: 'no key specified' }));
-  }
-
-  if (!request.body.x) {
-    return response(types.json({ err: 'no x grid coordinate specified' }));
-  }
-
-  if (!request.body.y) {
-    return response(types.json({ err: 'no y grid coordinate specified' }));
+  if (verificationError) {
+    return response(types.json(verificationError));
   }
 
   var result = game.defend(request.body.key, request.body.x, request.body.y);
@@ -122,7 +120,14 @@ var query = function(request, response) {
 };
 
 var mine = function(request, response) {
-  return response(types.json({ type: 'mine' }));
+  var verificationError = verifySingleCellRequest(request);
+
+  if (verificationError) {
+    return response(types.json(verificationError));
+  }
+
+  var result = game.layMine(request.body.key, request.body.x, request.body.y);
+  return response(types.json(result));
 };
 
 var cloak = function(request, response) {
