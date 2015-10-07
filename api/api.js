@@ -1,5 +1,6 @@
 var querystring = require('querystring');
 var http = require('http');
+var ddos = require('./ddos');
 var log = require('../lib/log');
 
 var routes = require('./routes');
@@ -17,6 +18,8 @@ var startServer = function(port) {
   };
 
   var server = http.createServer(handler);
+
+  server.on('connection', ddos.handler);
   server.listen(port);
 
   log('api', 'listening on :' + port);

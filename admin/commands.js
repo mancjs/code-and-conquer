@@ -1,4 +1,5 @@
 var db = require('../db/db');
+var ddos = require('../api/ddos');
 var game = require('../game/game');
 var registration = require('../registration/registration');
 
@@ -57,6 +58,7 @@ var getStatus = function() {
   var gameStatus = game.getStatus();
 
   var values = [
+    'ddos: ' + (ddos.isEnabled() ? 'on' : 'off'),
     'teams: ' + registrationStatus.teamCount,
     'registration: ' + (registrationStatus.open ? 'open' : 'closed'),
     'game: ' + (gameStatus.started ? 'started' : 'stopped'),
@@ -141,6 +143,37 @@ var getScores = function() {
   }).join('\n');
 };
 
+var ddosEnable = function() {
+  ddos.enable(true);
+};
+
+var ddosDisable = function() {
+  ddos.enable(false);
+};
+
+var ddosClear = function() {
+  ddos.clear();
+};
+
+var ddosList = function() {
+  var clients = ddos.getData();
+  var keys = Object.keys(clients);
+
+  var response = 'clients: ' + keys.length;
+
+  if (keys.length > 0) {
+    response += '\n' + keys.map(function(address) {
+      var client = clients[address];
+      var timeLeft = 60 - Math.round((new Date().getTime() - client.added) / 1000);
+      var bannedState = (client.banned ? ' | BANNED (' + timeLeft + 's)' : '');
+
+      return address + ' | requests = ' + client.requests + bannedState;
+    }).join('\n');
+  }
+
+  return response;
+};
+
 module.exports = {
   'init-game': initGame,
   'start-game': startGame,
@@ -150,5 +183,9 @@ module.exports = {
   'del-team': deleteTeam,
   'status': getStatus,
   'scores': getScores,
-  'simulate': simulate
+  'simulate': simulate,
+  'enable-ddos': ddosEnable,
+  'disable-ddos': ddosDisable,
+  'clear-ddos': ddosClear,
+  'ddos-list': ddosList
 };

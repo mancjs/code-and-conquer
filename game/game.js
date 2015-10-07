@@ -33,9 +33,8 @@ var loadExistingGame = function() {
 
   if (state.gameStarted) {
     requests.startRefreshTimer();
+    log('game', 'loaded game from ' + new Date(state.date));
   }
-
-  log('game', 'loaded game from ' + new Date(state.date));
 };
 
 var verifyTeam = function(key) {
