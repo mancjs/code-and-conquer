@@ -36,31 +36,14 @@
           <div class="role-details">
             {{ if (team.role === 'minelayer') { }}
               <img class="icon icon-minelayer" />
-
-              <div class="role-activation-info">
-                {{ if (team.mineTriggeredBy) { }}
-                  Mine Triggered By <br /><b>{{= team.mineTriggeredBy }}</b>
-                {{ } }}
-              </div>
             {{ } }}
 
             {{ if (team.role === 'cloaker') { }}
               <img class="icon icon-cloaker" />
-
-              <div class="role-activation-info">
-                {{ if (team.cloakTime) { }}
-                  Cloaked <b>{{= team.cloakTime }}</b><br />
-                  Cells <b>{{= team.cloakedCells }}</b><br />
-                {{ } }}
-              </div>
             {{ } }}
 
             {{ if (team.role === 'spy') { }}
               <img class="icon icon-spy" />
-
-              <div class="role-activation-info">
-
-              </div>
             {{ } }}
 
             <div class="role-data">
@@ -74,6 +57,27 @@
                 <div class="value">{{= team.roleUsed ? 'yes' : 'no' }}</div>
               </div>
             </div>
+
+            {{ if (team.mineTriggeredBy) { }}
+              <div class="role-activation-info">
+                Mine Triggered By <br /><b>{{= team.mineTriggeredBy }}</b>
+              </div>
+            {{ } }}
+
+            {{ if (team.cloakTime) { }}
+              <div class="role-activation-info">
+                Cloaked <b>{{= team.cloakTime }}</b><br />
+                Cells <b>{{= team.cloakedCells }}</b><br />
+              </div>
+            {{ } }}
+
+            {{ if (team.redirectedTeam) { }}
+              <div class="role-activation-info">
+                Redirected <b>{{= team.redirectedTeam }}</b><br />
+                To <b>{{= team.redirectedTo }}</b><br />
+              </div>
+            {{ } }}
+
           </div>
         </div>
 

@@ -613,6 +613,7 @@ describe('game', function() {
 
       expect(team1.roleUsed).to.be(true);
       expect(team1.redirectedTeam).to.be('Team 2');
+      expect(team1.redirectedTo).to.be('1,3');
     });
   });
 });

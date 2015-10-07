@@ -108,6 +108,7 @@ var setSpy = function(key, teamName, x, y) {
   var team = getTeamByKey(key);
 
   team.redirectedTeam = getTeamByName(teamName).name;
+  team.redirectedTo = x + ',' + y;
 
   state.roleData.redirects[teamName] = {
     remaining: 15,
