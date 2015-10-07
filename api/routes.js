@@ -92,6 +92,32 @@ var verifySingleCellRequest = function(request) {
   }
 };
 
+var verifyMultipleCellRequest = function(request) {
+  if (!request.body) {
+    return { err: 'no data sent to request' };
+  }
+
+  if (!request.body.key) {
+    return { err: 'no key specified' };
+  }
+
+  if (!request.body.cells || !request.body.cells.length) {
+    return { err: 'no cells specified' };
+  }
+
+  for (var i = 0; i < request.body.cells.length; i++) {
+    var cell = request.body.cells[i];
+
+    if (!cell || !cell.x) {
+      return { err: 'each cell must contain numeric x and y coords' };
+    }
+
+    if (!cell || !cell.y) {
+      return { err: 'each cell must contain numeric x and y coords' };
+    }
+  }
+};
+
 var attack = function(request, response) {
   var verificationError = verifySingleCellRequest(request);
 
@@ -131,7 +157,14 @@ var mine = function(request, response) {
 };
 
 var cloak = function(request, response) {
-  return response(types.json({ type: 'cloak' }));
+  var verificationError = verifyMultipleCellRequest(request);
+
+  if (verificationError) {
+    return response(types.json(verificationError));
+  }
+
+  var result = game.cloak(request.body.key, request.body.cells);
+  return response(types.json(result));
 };
 
 var spy = function(request, response) {

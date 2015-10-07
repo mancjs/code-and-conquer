@@ -108,6 +108,7 @@ var updateGridWithCloaks = function(grid) {
     return age <= cloakValidityMs;
   }).forEach(function(cloak) {
     grid.cells[cloak.y][cloak.x].health = 120;
+    grid.cells[cloak.y][cloak.x].history = { attacks: {}, defends: {} };
   });
 };
 

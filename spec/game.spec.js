@@ -551,7 +551,10 @@ describe('game', function() {
       state.teams.push(team);
 
       state.grid.cells[3][2].health = 10;
+      state.grid.cells[3][2].history.attacks['Some Team'] = 5;
       state.grid.cells[5][4].health = 1;
+      state.grid.cells[5][4].history.defends['Team 1'] = 10;
+      state.grid.cells[5][4].history.defends['Team 2'] = 5;
 
       var result = game.cloak('team-1', [ { x: 2, y: 3 }, { x: 4, y: 5 } ]);
       expect(result.err).to.be(undefined);
@@ -560,7 +563,12 @@ describe('game', function() {
       var queryState1 = game.query();
 
       expect(queryState1.grid[3][2].health).to.be(120);
+      expect(Object.keys(queryState1.grid[3][2].history.attacks).length).to.be(0);
+      expect(Object.keys(queryState1.grid[3][2].history.defends).length).to.be(0);
+
       expect(queryState1.grid[5][4].health).to.be(120);
+      expect(Object.keys(queryState1.grid[5][4].history.attacks).length).to.be(0);
+      expect(Object.keys(queryState1.grid[5][4].history.defends).length).to.be(0);
 
       roles.test.setCurrentTime(new Date().getTime() + (2.5 * 60 * 1000));
 
