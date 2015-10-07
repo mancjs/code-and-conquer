@@ -10,6 +10,12 @@ var getTeamByKey = function(key) {
   })[0];
 };
 
+var getTeamByName = function(name) {
+  return db.get().teams.filter(function(team) {
+    return team.name === name;
+  })[0];
+};
+
 var verify = function(key, role) {
   return getTeamByKey(key).role === role;
 };
@@ -38,6 +44,9 @@ var checkMineTrigger = function(key, x, y) {
     mineData.triggered = true;
     mineData.triggeredBy = getTeamByKey(key).name;
 
+    var owner = getTeamByName(mineData.owner);
+    owner.mineTriggeredBy = mineData.triggeredBy;
+
     return {
       triggered: true,
       owner: mineData.owner
@@ -54,8 +63,22 @@ var setCloak = function(key, cells) {
     return;
   }
 
+  var getTimestamp = function() {
+    var time = new Date;
+
+    return [time.getHours(), time.getMinutes(), time.getSeconds()].map(function(part) {
+      return part < 10 ? '0' + part : part;
+    }).join(':');
+  };
+
   var state = db.get();
   var team = getTeamByKey(key);
+
+  team.cloakTime = getTimestamp();
+
+  team.cloakedCells = cells.map(function(cell) {
+    return cell.x + ',' + cell.y;
+  }).join(' ');
 
   cells.forEach(function(cell) {
     state.roleData.cloaks.push({

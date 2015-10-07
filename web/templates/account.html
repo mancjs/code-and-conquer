@@ -11,23 +11,98 @@
       <h1>{{= team.name }}</h1>
 
       <div class="panes">
-        <div class="account-details">
-          <img class="avatar" src="{{= team.gravatar }}" />
+        <div class="left">
+          <div class="account-details">
+            <img class="avatar" src="{{= team.gravatar }}" />
 
-          <div class="account-data">
+            <div class="account-data">
+              <div class="data-row">
+                <div class="key">Key</div>
+                <div class="value">{{= team.key }}</div>
+              </div>
+
+              <div class="data-row">
+                <div class="key">Team Colour</div>
+                <div class="value"><div id="team-colour" style="background: {{= team.colour }};"></div></div>
+              </div>
+
+              <div class="data-row">
+                <div class="key">Requests</div>
+                <div class="value">{{= team.requests }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="role-details">
+            {{ if (team.role === 'minelayer') { }}
+              <img class="icon icon-minelayer" />
+
+              <div class="role-activation-info">
+                {{ if (team.mineTriggeredBy) { }}
+                  Mine Triggered By <br /><b>{{= team.mineTriggeredBy }}</b>
+                {{ } }}
+              </div>
+            {{ } }}
+
+            {{ if (team.role === 'cloaker') { }}
+              <img class="icon icon-cloaker" />
+
+              <div class="role-activation-info">
+                {{ if (team.cloakTime) { }}
+                  Cloaked <b>{{= team.cloakTime }}</b><br />
+                  Cells <b>{{= team.cloakedCells }}</b><br />
+                {{ } }}
+              </div>
+            {{ } }}
+
+            {{ if (team.role === 'spy') { }}
+              <img class="icon icon-spy" />
+
+              <div class="role-activation-info">
+
+              </div>
+
+            {{ } }}
+
+            <div class="role-data">
+              <div class="data-row">
+                <div class="key">Your Role</div>
+                <div class="value">{{= team.role }}</div>
+              </div>
+
+              <div class="data-row">
+                <div class="key">Role Used</div>
+                <div class="value">{{= team.roleUsed ? 'yes' : 'no' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-info">
+          <h2 class="middle">The Grid</h2>
+
+          <div id="cell-info">
+            <div class="cell-coords">
+              <b>Cell</b> <span id="cell-coords"></span>
+            </div>
+
+            <div class="cell-owner">
+              <b>Owner</b> <div class="owner-dot" id="cell-owner-dot"></div>
+              <span id="cell-owner"></span>
+            </div>
+          </div>
+
+          <div id="user-grid" class="grid"></div>
+
+          <div class="grid-data">
             <div class="data-row">
-              <div class="key">Key</div>
-              <div class="value">{{= team.key }}</div>
+              <div class="key">Squares Owned</div>
+              <div class="value" id="owned-squares">0</div>
             </div>
 
             <div class="data-row">
-              <div class="key">Team Colour</div>
-              <div class="value"><div id="team-colour" style="background: {{= team.colour }};"></div></div>
-            </div>
-
-            <div class="data-row">
-              <div class="key">Requests</div>
-              <div class="value">{{= team.requests }}</div>
+              <div class="key">Free Squares</div>
+              <div class="value" id="free-squares">0</div>
             </div>
 
             <div class="data-row">
@@ -43,35 +118,6 @@
             <div class="data-row">
               <div class="key">Triple Squares</div>
               <div class="value">{{= gameStatus.tripleSquares }}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-info">
-          <h2 class="middle">The Grid</h2>
-
-          <div id="cell-info">
-            <div class="cell-coords">
-              <b>Cell</b> <span id="cell-coords">0,7</span>
-            </div>
-
-            <div class="cell-owner">
-              <b>Owner</b> <div class="owner-dot" id="cell-owner-dot"></div>
-              <span id="cell-owner">Some team name</span>
-            </div>
-          </div>
-
-          <div id="user-grid" class="grid"></div>
-
-          <div class="grid-data">
-            <div class="data-row">
-              <div class="key">Squares Owned</div>
-              <div class="value" id="owned-squares">0</div>
-            </div>
-
-            <div class="data-row">
-              <div class="key">Free Squares</div>
-              <div class="value" id="free-squares">0</div>
             </div>
           </div>
         </div>

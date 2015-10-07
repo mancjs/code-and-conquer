@@ -37,8 +37,12 @@ input:focus, textarea:focus {
   box-sizing: border-box;
 }
 
-.account-container .account-details {
+.account-container .left {
   float: left;
+}
+
+.account-container .left .role-details {
+  margin-top: 50px;
   background: rgba(54, 53, 60, 1);
   position: relative;
   border-radius: 20px;
@@ -47,11 +51,56 @@ input:focus, textarea:focus {
   box-sizing: border-box;
 }
 
-.account-container .account-details .account-data {
+.role-details .icon {
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  width: 100px;
+  height: 100px;
+}
+
+.role-details .icon-minelayer {
+  content:url('/images/roles/minelayer.png');
+}
+
+.role-details .icon-cloaker {
+  content:url('/images/roles/cloaker.png');
+}
+
+.role-details .icon-spy {
+  content:url('/images/roles/spy.png');
+}
+
+.role-details .role-data {
+  margin-top: 10px;
+}
+
+.role-details .role-activation-info {
+  margin-top: 10px;
+  padding: 10px;
+  line-height: 24px;
+  text-align: center;
+  min-height: 15px;
+}
+
+.role-activation-info b {
+  color: #e05050;
+}
+
+.account-container .left .account-details {
+  background: rgba(54, 53, 60, 1);
+  position: relative;
+  border-radius: 20px;
+  padding: 12px;
+  width: 300px;
+  box-sizing: border-box;
+}
+
+.account-container .left .account-details .account-data {
   margin-top: 40px;
 }
 
-.account-container .account-details .avatar {
+.account-container .left .account-details .avatar {
   position: absolute;
   background: #36353c;
   border: solid 10px #36353c;
@@ -204,8 +253,6 @@ input:focus, textarea:focus {
 
 .account-container .players .player .score {
   width: 44px;
-  /*height: 30px;*/
-  /*line-height: 40px;*/
   padding: 10px 0 5px 0;
   text-align: center;
   border-radius: 2px;
@@ -221,4 +268,31 @@ input:focus, textarea:focus {
   width: 80px;
   height: 80px;
   border-radius: 50%;
+}
+
+/* @2x */
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) {
+  body {
+    background: #222 url('/images/tiles/tile.png') repeat;
+    background-size: 798px 798px;
+  }
+
+  .role-details .icon-minelayer {
+    content:url('/images/roles/minelayer@2x.png');
+  }
+
+  .role-details .icon-cloaker {
+    content:url('/images/roles/cloaker@2x.png');
+  }
+
+  .role-details .icon-spy {
+    content:url('/images/roles/spy@2x.png');
+  }
 }

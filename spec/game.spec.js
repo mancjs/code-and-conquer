@@ -416,6 +416,8 @@ describe('game', function() {
       expect(state.roleData.mines['2,2'].owner).to.be('Team 1');
       expect(state.roleData.mines['2,2'].triggeredBy).to.be('Team 2');
 
+      expect(team1.mineTriggeredBy).to.be('Team 2');
+
       var result3 = game.attack('team-3', 2, 2);
       expect(result3.err).to.be(undefined);
       expect(result3.requestsRemaining).to.be(29);
@@ -445,6 +447,8 @@ describe('game', function() {
       expect(state.roleData.mines['5,5'].triggered).to.be(true);
       expect(state.roleData.mines['5,5'].owner).to.be('Team 1');
       expect(state.roleData.mines['5,5'].triggeredBy).to.be('Team 2');
+
+      expect(team1.mineTriggeredBy).to.be('Team 2');
 
       team2.requests = 30;
 
@@ -534,9 +538,11 @@ describe('game', function() {
       expect(state.roleData.cloaks[2].y).to.be(2);
 
       expect(team.roleUsed).to.be(true);
+      expect(team.cloakTime).to.not.be(undefined);
+      expect(team.cloakedCells).to.be('0,0 1,1 2,2');
     });
 
-    it('applying cloak to cells causes their health to be projected at 100% for 5 mins', function() {
+    it('applying cloak to cells causes their health to be reported as 100% in queries for 5 mins', function() {
       var state = db.get();
 
       var team = { key: 'team-1', name: 'Team 1', role: 'cloaker', requests: 30 };
