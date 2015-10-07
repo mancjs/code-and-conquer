@@ -17,6 +17,12 @@ var initGame = function(args) {
 };
 
 var startGame = function() {
+  var state = db.get();
+
+  if (!state.grid) {
+    return 'no game initialised';
+  }
+
   registration.close();
   game.start();
 };
@@ -103,6 +109,10 @@ var simulate = function() {
 
 var getScores = function() {
   var state = db.get();
+
+  if (!state.gameStarted) {
+    return;
+  }
 
   var teams = {};
 

@@ -35,7 +35,7 @@ var init = function() {
       redirects: {}
     },
     teams: [],
-    grid: []
+    grid: null
   };
 
   return get();
