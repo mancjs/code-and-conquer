@@ -1,4 +1,5 @@
 var db = require('../db/db');
+var log = require('../lib/log');
 
 var test = {
   timeOverride: null
@@ -33,6 +34,8 @@ var setMine = function(key, x, y) {
   var team = getTeamByKey(key);
 
   state.roleData.mines[x + ',' + y] = { triggered: false, owner: team.name };
+
+  log('roles', team.name + ' set mine at ' + x + ',' + y);
 };
 
 var checkMineTrigger = function(key, x, y) {
@@ -46,6 +49,8 @@ var checkMineTrigger = function(key, x, y) {
 
     var owner = getTeamByName(mineData.owner);
     owner.mineTriggeredBy = mineData.triggeredBy;
+
+    log('roles', mineData.owner + '\'s mine triggered by ' + mineData.triggeredBy);
 
     return {
       triggered: true,
@@ -88,6 +93,8 @@ var setCloak = function(key, cells) {
       y: cell.y
     });
   });
+
+  log('roles', team.name + ' deployed cloak');
 };
 
 var updateGridWithCloaks = function(grid) {
@@ -116,6 +123,8 @@ var setSpy = function(key, teamName, x, y) {
     x: x,
     y: y
   };
+
+  log('roles', team.name + ' set redirect on ' + team.redirectedTeam + ' to ' + x + ',' + y);
 };
 
 var isTeamRedirected = function(key) {
@@ -126,6 +135,8 @@ var isTeamRedirected = function(key) {
 
   if (redirect && redirect.remaining > 0) {
     redirect.remaining -= 1;
+
+    log('roles', team.name + '\'s request redirected to ' + redirect.x + ',' + redirect.y);
 
     return {
       x: redirect.x,
