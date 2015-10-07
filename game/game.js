@@ -54,6 +54,13 @@ var attack = function(key, x, y) {
     return verificationError;
   }
 
+  var redirection = roles.isTeamRedirected(key);
+
+  if (redirection) {
+    x = redirection.x;
+    y = redirection.y;
+  }
+
   var state = db.get();
   var cell = grid.getCell(state.grid, x, y);
 
@@ -100,6 +107,13 @@ var defend = function(key, x, y) {
 
   if (verificationError) {
     return verificationError;
+  }
+
+  var redirection = roles.isTeamRedirected(key);
+
+  if (redirection) {
+    x = redirection.x;
+    y = redirection.y;
   }
 
   var state = db.get();

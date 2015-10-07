@@ -118,6 +118,24 @@ var setSpy = function(key, teamName, x, y) {
   };
 };
 
+var isTeamRedirected = function(key) {
+  var state = db.get();
+  var team = getTeamByKey(key);
+
+  var redirect = state.roleData.redirects[team.name];
+
+  if (redirect && redirect.remaining > 0) {
+    redirect.remaining -= 1;
+
+    return {
+      x: redirect.x,
+      y: redirect.y
+    };
+  }
+
+  return false;
+};
+
 var setCurrentTime = function(time) {
   test.timeOverride = time;
 };
@@ -132,6 +150,7 @@ module.exports = {
   setCloak: setCloak,
   updateGridWithCloaks: updateGridWithCloaks,
   setSpy: setSpy,
+  isTeamRedirected: isTeamRedirected,
   test: {
     setCurrentTime: setCurrentTime
   }

@@ -615,5 +615,74 @@ describe('game', function() {
       expect(team1.redirectedTeam).to.be('Team 2');
       expect(team1.redirectedTo).to.be('1,3');
     });
+
+    it('attack commands from a redirected team go to the redirected square', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'spy', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'cloaker', requests: 30 };
+
+      state.teams.push(team1, team2);
+
+      var result1 = game.spy('team-1', 'Team 2', 1, 1);
+      expect(result1.err).to.be(undefined);
+      expect(result1.requestsRemaining).to.be(29);
+      expect(team1.requests).to.be(29);
+
+      for (var i = 0; i < 14; i++) {
+        expect(game.attack('team-2', 5, 5).err).to.be(undefined);
+      }
+
+      expect(team2.requests).to.be(16);
+      expect(state.grid.cells[5][5].health).to.be(60);
+      expect(state.grid.cells[1][1].health).to.be(46);
+      expect(state.roleData.redirects['Team 2'].remaining).to.be(1);
+
+      expect(game.attack('team-2', 5, 5).err).to.be(undefined);
+
+      expect(team2.requests).to.be(15);
+      expect(state.grid.cells[5][5].health).to.be(60);
+      expect(state.grid.cells[1][1].health).to.be(45);
+      expect(state.roleData.redirects['Team 2'].remaining).to.be(0);
+
+      expect(game.attack('team-2', 5, 5).err).to.be(undefined);
+
+      expect(team2.requests).to.be(14);
+      expect(state.grid.cells[5][5].health).to.be(59);
+      expect(state.grid.cells[1][1].health).to.be(45);
+      expect(state.roleData.redirects['Team 2'].remaining).to.be(0);
+    });
+
+    it('defend commands from a redirected team go to the redirected square', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'spy', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'cloaker', requests: 30 };
+
+      state.teams.push(team1, team2);
+
+      var result1 = game.spy('team-1', 'Team 2', 1, 1);
+      expect(result1.err).to.be(undefined);
+      expect(result1.requestsRemaining).to.be(29);
+      expect(team1.requests).to.be(29);
+
+      for (var i = 0; i < 7; i++) {
+        expect(game.attack('team-2', 5, 5).err).to.be(undefined);
+      }
+
+      expect(team2.requests).to.be(23);
+      expect(state.grid.cells[5][5].health).to.be(60);
+      expect(state.grid.cells[1][1].health).to.be(53);
+      expect(state.roleData.redirects['Team 2'].remaining).to.be(8);
+
+      for (var j = 0; j < 8; j++) {
+        expect(game.defend('team-2', 5, 5).err).to.be(undefined);
+      }
+
+      expect(team2.requests).to.be(15);
+      expect(state.grid.cells[5][5].health).to.be(60);
+      expect(state.grid.cells[1][1].health).to.be(60);
+      expect(state.roleData.redirects['Team 2'].remaining).to.be(0);
+    });
   });
 });
