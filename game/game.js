@@ -138,12 +138,10 @@ var defend = function(key, x, y) {
 };
 
 var query = function() {
-  console.time('query');
   var state = db.get();
   var grid = clone(state.grid);
 
   roles.updateGridWithCloaks(grid);
-  console.timeEnd('query');
 
   return {
     grid: grid.cells,
