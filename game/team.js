@@ -6,6 +6,14 @@ var getByKey = function(key) {
   })[0];
 };
 
+var existsByName = function(name) {
+  var team = db.get().teams.filter(function(team) {
+    return team.name === name;
+  })[0];
+
+  return !!team;
+};
+
 var hasRequests = function(key) {
   var team = getByKey(key);
   return team && team.requests > 0;
@@ -39,6 +47,7 @@ var getPublicData = function(key) {
 };
 
 module.exports = {
+  existsByName: existsByName,
   hasRequests: hasRequests,
   useRequest: useRequest,
   useAllRequests: useAllRequests,

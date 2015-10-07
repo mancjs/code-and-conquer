@@ -235,16 +235,25 @@ var cloak = function(key, cells) {
   };
 };
 
-var spy = function(key, teamName) {
+var spy = function(key, teamName, x, y) {
   var result = roleVerify(key, 'spy');
 
   if (result.err) {
     return result;
   }
 
-  //var state = db.get();
+  if (!team.existsByName(teamName)) {
+    return { err: 'team not found: ' + teamName };
+  }
 
-  // do spy
+  var state = db.get();
+  var cell = grid.getCell(state.grid, x, y);
+
+  if (!cell) {
+    return { err: ['no cell found at ', x, ',', y].join('') };
+  }
+
+  roles.setSpy(key, teamName, x, y);
 
   team.useRequest(key);
   roles.useRole(key);

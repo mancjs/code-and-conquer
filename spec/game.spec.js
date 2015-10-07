@@ -358,7 +358,7 @@ describe('game', function() {
       var error2 = game.cloak(team2.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
       expect(error2.err).to.match(/you can only play a role once/);
 
-      var result3 = game.spy(team3.key, team1.name);
+      var result3 = game.spy(team3.key, team1.name, 0, 0);
       expect(result3.err).to.be(undefined);
       expect(result3.requestsRemaining).to.be(1);
 
@@ -574,6 +574,45 @@ describe('game', function() {
 
       expect(queryState3.grid[3][2].health).to.be(10);
       expect(queryState3.grid[5][4].health).to.be(1);
+    });
+
+    it('applying spy to unknown team or invalid square fails', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'spy', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'minelayer', requests: 30 };
+
+      state.teams.push(team1, team2);
+
+      var result1 = game.spy('team-1', 'Unknown Team', 4, 4);
+      expect(result1.err).to.match(/team not found: Unknown Team/);
+      expect(team1.requests).to.be(30);
+
+      var result2 = game.spy('team-1', 'Team 2', 42, 4);
+      expect(result2.err).to.match(/no cell found at 42,4/);
+      expect(team1.requests).to.be(30);
+    });
+
+    it('applying spy to valid team and square stores correct role state', function() {
+      var state = db.get();
+
+      var team1 = { key: 'team-1', name: 'Team 1', role: 'spy', requests: 30 };
+      var team2 = { key: 'team-2', name: 'Team 2', role: 'cloaker', requests: 30 };
+
+      state.teams.push(team1, team2);
+
+      var result = game.spy('team-1', 'Team 2', 1, 3);
+      expect(result.err).to.be(undefined);
+      expect(result.requestsRemaining).to.be(29);
+      expect(team1.requests).to.be(29);
+
+      expect(state.roleData.redirects['Team 2'].remaining).to.be(15);
+      expect(state.roleData.redirects['Team 2'].owner).to.be('Team 1');
+      expect(state.roleData.redirects['Team 2'].x).to.be(1);
+      expect(state.roleData.redirects['Team 2'].y).to.be(3);
+
+      expect(team1.roleUsed).to.be(true);
+      expect(team1.redirectedTeam).to.be('Team 2');
     });
   });
 });

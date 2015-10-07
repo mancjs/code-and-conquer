@@ -103,11 +103,26 @@ var updateGridWithCloaks = function(grid) {
   });
 };
 
+var setSpy = function(key, teamName, x, y) {
+  var state = db.get();
+  var team = getTeamByKey(key);
+
+  team.redirectedTeam = getTeamByName(teamName).name;
+
+  state.roleData.redirects[teamName] = {
+    remaining: 15,
+    owner: team.name,
+    x: x,
+    y: y
+  };
+};
+
 var setCurrentTime = function(time) {
   test.timeOverride = time;
 };
 
 module.exports = {
+  getTeamByName: getTeamByName,
   verify: verify,
   useRole: useRole,
   roleUsed: roleUsed,
@@ -115,6 +130,7 @@ module.exports = {
   checkMineTrigger: checkMineTrigger,
   setCloak: setCloak,
   updateGridWithCloaks: updateGridWithCloaks,
+  setSpy: setSpy,
   test: {
     setCurrentTime: setCurrentTime
   }
