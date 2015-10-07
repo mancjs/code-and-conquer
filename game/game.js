@@ -155,6 +155,14 @@ var defend = function(key, x, y) {
 
 var query = function() {
   var state = db.get();
+
+  if (!state.grid) {
+    return {
+      grid: [],
+      gameStarted: false
+    };
+  }
+
   var grid = clone(state.grid);
 
   roles.updateGridWithCloaks(grid);
