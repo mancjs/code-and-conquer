@@ -4,6 +4,7 @@ var log = require('../lib/log');
 var team = require('./team');
 var roles = require('./roles');
 var events = require('./events');
+var clone = require('../lib/clone');
 var requests = require('./requests');
 
 var init = function(gridSize) {
@@ -138,12 +139,15 @@ var defend = function(key, x, y) {
 };
 
 var query = function() {
+  console.time('query');
   var state = db.get();
+  var grid = clone(state.grid);
 
-  // clone this before modification
+  roles.updateGridWithCloaks(grid);
+  console.timeEnd('query');
 
   return {
-    grid: state.grid.cells,
+    grid: grid.cells,
     gameStarted: state.gameStarted
   };
 };

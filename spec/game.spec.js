@@ -2,6 +2,7 @@ var db = require('../db/db');
 var expect = require('expect.js');
 var game = require('../game/game');
 var grid = require('../game/grid');
+var roles = require('../game/roles');
 var events = require('../game/events');
 
 beforeEach(function() {
@@ -517,15 +518,56 @@ describe('game', function() {
       expect(result.err).to.be(undefined);
       expect(team.requests).to.be(29);
 
-      expect(state.roleData.cloaks['0,0'].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
-      expect(state.roleData.cloaks['1,1'].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
-      expect(state.roleData.cloaks['2,2'].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+      expect(state.roleData.cloaks[0].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+      expect(state.roleData.cloaks[0].owner).to.be('Team 1');
+      expect(state.roleData.cloaks[0].x).to.be(0);
+      expect(state.roleData.cloaks[0].y).to.be(0);
 
-      expect(state.roleData.cloaks['0,0'].owner).to.be('Team 1');
-      expect(state.roleData.cloaks['1,1'].owner).to.be('Team 1');
-      expect(state.roleData.cloaks['2,2'].owner).to.be('Team 1');
+      expect(state.roleData.cloaks[1].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+      expect(state.roleData.cloaks[1].owner).to.be('Team 1');
+      expect(state.roleData.cloaks[1].x).to.be(1);
+      expect(state.roleData.cloaks[1].y).to.be(1);
+
+      expect(state.roleData.cloaks[2].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
+      expect(state.roleData.cloaks[2].owner).to.be('Team 1');
+      expect(state.roleData.cloaks[2].x).to.be(2);
+      expect(state.roleData.cloaks[2].y).to.be(2);
 
       expect(team.roleUsed).to.be(true);
+    });
+
+    it('applying cloak to cells causes their health to be projected at 100% for 5 mins', function() {
+      var state = db.get();
+
+      var team = { key: 'team-1', name: 'Team 1', role: 'cloaker', requests: 30 };
+
+      state.teams.push(team);
+
+      state.grid.cells[3][2].health = 10;
+      state.grid.cells[5][4].health = 1;
+
+      var result = game.cloak('team-1', [ { x: 2, y: 3 }, { x: 4, y: 5 } ]);
+      expect(result.err).to.be(undefined);
+      expect(team.requests).to.be(29);
+
+      var queryState1 = game.query();
+
+      expect(queryState1.grid[3][2].health).to.be(120);
+      expect(queryState1.grid[5][4].health).to.be(120);
+
+      roles.test.setCurrentTime(new Date().getTime() + (2.5 * 60 * 1000));
+
+      var queryState2 = game.query();
+
+      expect(queryState2.grid[3][2].health).to.be(120);
+      expect(queryState2.grid[5][4].health).to.be(120);
+
+      roles.test.setCurrentTime(new Date().getTime() + (6 * 60 * 1000));
+
+      var queryState3 = game.query();
+
+      expect(queryState3.grid[3][2].health).to.be(10);
+      expect(queryState3.grid[5][4].health).to.be(1);
     });
   });
 });

@@ -31,7 +31,7 @@ var init = function() {
     date: new Date,
     roleData: {
       mines: {},
-      cloaks: {},
+      cloaks: [],
       redirects: {}
     },
     teams: [],

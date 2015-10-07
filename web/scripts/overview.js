@@ -2,6 +2,7 @@
   var timer;
   var gameState;
   var ticks = 0;
+  var $titlePrefix;
   var $refreshSeconds;
 
   var fetchStateUpdate = function(callback) {
@@ -10,8 +11,10 @@
         gameState = state;
 
         if (!gameState.gameStarted) {
-          $refreshSeconds.innerText = 'Game Not Started';
+          $titlePrefix.innerText = 'Game Not Started';
+          $refreshSeconds.innerText = '';
         } else {
+          $titlePrefix.innerText = 'Next Requests Refresh:';
           $refreshSeconds.innerText = gameState.refreshSeconds;
         }
       }
@@ -50,6 +53,7 @@
   };
 
   var init = function() {
+    $titlePrefix = document.getElementById('title-prefix');
     $refreshSeconds = document.getElementById('refresh-seconds');
 
     fetchStateUpdate(function() {

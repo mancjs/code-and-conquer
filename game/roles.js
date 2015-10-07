@@ -1,5 +1,9 @@
 var db = require('../db/db');
 
+var test = {
+  timeOverride: null
+};
+
 var getTeamByKey = function(key) {
   return db.get().teams.filter(function(team) {
     return team.key === key;
@@ -54,8 +58,30 @@ var setCloak = function(key, cells) {
   var team = getTeamByKey(key);
 
   cells.forEach(function(cell) {
-    state.roleData.cloaks[cell.x + ',' + cell.y] = { cloakTime: new Date().getTime(), owner: team.name };
+    state.roleData.cloaks.push({
+      cloakTime: new Date().getTime(),
+      owner: team.name,
+      x: cell.x,
+      y: cell.y
+    });
   });
+};
+
+var updateGridWithCloaks = function(grid) {
+  var state = db.get();
+
+  var cloakValidityMs = 5 * 60 * 1000;
+
+  state.roleData.cloaks.filter(function(cloak) {
+    var age = (test.timeOverride || new Date().getTime()) - cloak.cloakTime;
+    return age <= cloakValidityMs;
+  }).forEach(function(cloak) {
+    grid.cells[cloak.y][cloak.x].health = 120;
+  });
+};
+
+var setCurrentTime = function(time) {
+  test.timeOverride = time;
 };
 
 module.exports = {
@@ -64,5 +90,9 @@ module.exports = {
   roleUsed: roleUsed,
   setMine: setMine,
   checkMineTrigger: checkMineTrigger,
-  setCloak: setCloak
+  setCloak: setCloak,
+  updateGridWithCloaks: updateGridWithCloaks,
+  test: {
+    setCurrentTime: setCurrentTime
+  }
 };
