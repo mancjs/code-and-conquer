@@ -90,6 +90,8 @@ var attack = function(key, x, y) {
       newOwner: teamData.name
     });
 
+    log('game', teamData.name + ' conquered cell ' + x + ',' + y + ' from ' + cell.owner.name);
+
     grid.setCellOwner(cell, teamData);
   } else {
     grid.addCellAttackHistory(cell, teamData.name, teamData.colour);

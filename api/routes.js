@@ -75,15 +75,50 @@ var getOverviewData = function() {
 };
 
 var attack = function(request, response) {
-  return response(types.json({ type: 'attack' }));
+  if (!request.body) {
+    return response(types.json({ err: 'no data sent to request' }));
+  }
+
+  if (!request.body.key) {
+    return response(types.json({ err: 'no key specified' }));
+  }
+
+  if (!request.body.x) {
+    return response(types.json({ err: 'no x grid coordinate specified' }));
+  }
+
+  if (!request.body.y) {
+    return response(types.json({ err: 'no y grid coordinate specified' }));
+  }
+
+  var result = game.attack(request.body.key, request.body.x, request.body.y);
+  return response(types.json(result));
 };
 
 var defend = function(request, response) {
-  return response(types.json({ type: 'defend' }));
+  if (!request.body) {
+    return response(types.json({ err: 'no data sent to request' }));
+  }
+
+  if (!request.body.key) {
+    return response(types.json({ err: 'no key specified' }));
+  }
+
+  if (!request.body.x) {
+    return response(types.json({ err: 'no x grid coordinate specified' }));
+  }
+
+  if (!request.body.y) {
+    return response(types.json({ err: 'no y grid coordinate specified' }));
+  }
+
+  var result = game.defend(request.body.key, request.body.x, request.body.y);
+  return response(types.json(result));
 };
 
 var query = function(request, response) {
-  return response(types.json({ type: 'query' }));
+  var result = game.query();
+  return response(types.json(result));
 };
 
 var mine = function(request, response) {

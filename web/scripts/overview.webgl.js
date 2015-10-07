@@ -84,7 +84,8 @@ var getHeight = function(bonus) {
 var attacks = [];
 
 var newAttack = function(x, z, cell) {
-  var attackColourIndex = colours.indexOf(cell.lastAttack.team.colour) + 1;
+  // this was +1 before, check with CD
+  var attackColourIndex = colours.indexOf(cell.lastAttack.team.colour);
   var attackMaterial = coloursMaterials[attackColourIndex];
 
   var attackSphere = new THREE.SphereGeometry(size * 0.4, 16, 16);
