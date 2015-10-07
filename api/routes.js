@@ -108,13 +108,35 @@ var verifyMultipleCellRequest = function(request) {
   for (var i = 0; i < request.body.cells.length; i++) {
     var cell = request.body.cells[i];
 
-    if (!cell || !cell.x) {
+    if (!cell || cell.x === undefined) {
       return { err: 'each cell must contain numeric x and y coords' };
     }
 
-    if (!cell || !cell.y) {
+    if (!cell || cell.y === undefined) {
       return { err: 'each cell must contain numeric x and y coords' };
     }
+  }
+};
+
+var verifySpyRequest = function(request) {
+  if (!request.body) {
+    return { err: 'no data sent to request' };
+  }
+
+  if (!request.body.key) {
+    return { err: 'no key specified' };
+  }
+
+  if (!request.body.teamName) {
+    return { err: 'no teamName specified' };
+  }
+
+  if (request.body.x === undefined) {
+    return { err: 'no x grid coordinate specified' };
+  }
+
+  if (request.body.y === undefined) {
+    return { err: 'no y grid coordinate specified' };
   }
 };
 
@@ -168,7 +190,14 @@ var cloak = function(request, response) {
 };
 
 var spy = function(request, response) {
-  return response(types.json({ type: 'spy' }));
+  var verificationError = verifySpyRequest(request);
+
+  if (verificationError) {
+    return response(types.json(verificationError));
+  }
+
+  var result = game.spy(request.body.key, request.body.teamName, request.body.x, request.body.y);
+  return response(types.json(result));
 };
 
 module.exports = {
