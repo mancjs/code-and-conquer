@@ -74,12 +74,46 @@ var getOverviewData = function() {
   };
 };
 
+var attack = function(request, response) {
+  return response(types.json({ type: 'attack' }));
+};
+
+var defend = function(request, response) {
+  return response(types.json({ type: 'defend' }));
+};
+
+var query = function(request, response) {
+  return response(types.json({ type: 'query' }));
+};
+
+var mine = function(request, response) {
+  return response(types.json({ type: 'mine' }));
+};
+
+var cloak = function(request, response) {
+  return response(types.json({ type: 'cloak' }));
+};
+
+var spy = function(request, response) {
+  return response(types.json({ type: 'spy' }));
+};
+
 module.exports = {
   'GET /': root,
   'GET /register': register,
   'POST /register': registerTeam,
+
   'GET /account': account,
   'GET /api/account-data': accountData,
+
   'GET /overview': overview,
-  'GET /api/overview-data': overviewData
+  'GET /api/overview-data': overviewData,
+
+  'POST /game/attack': attack,
+  'POST /game/defend': defend,
+  'GET /game/query': query,
+
+  'POST /game/role/mine': mine,
+  'POST /game/role/cloak': cloak,
+  'POST /game/role/spy': spy,
 };
