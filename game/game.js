@@ -16,6 +16,18 @@ var init = function(gridSize) {
   log('game', 'initialised with ' + gridSize.width + 'x' + gridSize.height + ' grid');
 };
 
+var stop = function() {
+  var state = db.get();
+
+  state.gameStarted = false;
+
+  if (process.env.NODE_ENV !== 'test') {
+    requests.stopRefreshTimer();
+  }
+
+  log('game', 'stopped');
+};
+
 var start = function() {
   var state = db.get();
 
@@ -301,6 +313,7 @@ var getStatus = function() {
 
 module.exports = {
   init: init,
+  stop: stop,
   start: start,
   attack: attack,
   defend: defend,

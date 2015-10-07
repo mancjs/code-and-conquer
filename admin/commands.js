@@ -27,6 +27,17 @@ var startGame = function() {
   game.start();
 };
 
+var stopGame = function() {
+  var state = db.get();
+
+  if (!state.grid) {
+    return 'no game initialised';
+  }
+
+  registration.close();
+  game.stop();
+};
+
 var openRegistration = function() {
   registration.open();
 };
@@ -187,6 +198,7 @@ var ddosList = function() {
 module.exports = {
   'init-game': initGame,
   'start-game': startGame,
+  'stop-game': stopGame,
   'open-reg': openRegistration,
   'close-reg': closeRegistration,
   'get-teams': getTeams,
