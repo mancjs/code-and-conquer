@@ -74,6 +74,10 @@ var getStatus = function() {
   var registrationStatus = registration.getStatus();
   var gameStatus = game.getStatus();
 
+  if (!gameStatus) {
+    return 'init game first';
+  }
+
   var values = [
     'ddos: ' + (ddos.isEnabled() ? 'on' : 'off'),
     'teams: ' + registrationStatus.teamCount,

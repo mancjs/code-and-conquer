@@ -302,6 +302,10 @@ var spy = function(key, teamName, x, y) {
 var getStatus = function() {
   var state = db.get();
 
+  if (!state.grid) {
+    return null;
+  }
+
   return {
     started: state.gameStarted,
     width: state.grid.width || 0,
