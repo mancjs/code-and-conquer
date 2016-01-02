@@ -25,6 +25,7 @@ var stop = function() {
     requests.stopRefreshTimer();
   }
 
+  db.takeFinalSnapshot();
   log('game', 'stopped');
 };
 

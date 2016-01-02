@@ -41,7 +41,9 @@ var init = function() {
   return get();
 };
 
-var save = function() {
+var save = function(oneOff) {
+  var rescheduleNextSave = !oneOff;
+
   try {
     var json = JSON.stringify(game);
 
@@ -50,8 +52,10 @@ var save = function() {
         return log('db', 'error saving file: ' + err);
       }
 
-      return takeSnapshot(function() {
-        setTimeout(save, config.saveInterval);
+      return takeSnapshot(!!oneOff, function() {
+        if (rescheduleNextSave) {
+          setTimeout(save, config.saveInterval);
+        }
       });
     });
   } catch (err) {
@@ -59,7 +63,7 @@ var save = function() {
   }
 };
 
-var takeSnapshot = function(callback) {
+var takeSnapshot = function(force, callback) {
   var getSnapshotName = function() {
     var time = new Date;
 
@@ -70,12 +74,16 @@ var takeSnapshot = function(callback) {
     return 'game-' + timestamp + '.json';
   };
 
-  if (new Date() - config.lastSnapshot < (1000 * 60)) {
+  if (!force && new Date() - config.lastSnapshot < (1000 * 60)) {
     return callback();
   }
 
   config.lastSnapshot = new Date;
   return copy(config.database, config.snapshotPath + '/' + getSnapshotName(), callback);
+};
+
+var takeFinalSnapshot = function() {
+  save(true);
 };
 
 var copy = function(input, output, callback) {
@@ -99,5 +107,6 @@ init();
 module.exports = {
   get: get,
   load: load,
-  init: init
+  init: init,
+  takeFinalSnapshot: takeFinalSnapshot
 };
