@@ -50,7 +50,7 @@ Some squares are worth x2 and x3 points (denoted as the taller squares on the gr
 Each team can select a special role during registration. There are 3 special roles to choose from. A special role can be played at any point during the game, but only once.
 
 ### Minelayer
-A minelayer can place one mine on a square of their choice. The player who trips it loses all their current requests.
+A minelayer can place one mine on a square of their choice. The team that triggers it loses all their current requests.
 
 ### Cloaker
 A cloaker can mask the health of 3 squares for 5 minutes of gameplay, making them appear to have maximum health to other players.
@@ -78,7 +78,7 @@ A spy can place a redirect on a player, causing their next 15 requests to be sen
 
 9. A team that has been spied on will have their subsequent 15 requests (`attack` or `defend`) sent to the grid location selected by the team that spied upon them.
 
-10. A cloak may be enabled on up to 3 cell locations, but no more. A cloak lasts for 5 minutes of game play, causing `query` commands to report the health of the specified cells as 120, regardless of their true health.
+10. A cloak may be enabled on up to 3 cell locations, but no more. A cloak lasts for 5 minutes of gameplay, causing `query` commands to report the health of the specified cells as 120, regardless of their true health.
 
 ## Replays
 
