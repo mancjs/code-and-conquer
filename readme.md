@@ -36,7 +36,7 @@ Some squares are worth x2 and x3 points (denoted as the taller squares on the gr
 
     Each `defend` command uses 1 request.
 
-  3. `query` retrieves the state of the grid, or a specific cell to be queried. Each cell holds a state which shows:
+  3. `query` retrieves the state of the entire grid, or a specific cell. Each cell holds a state which shows:
 
     * The cell's current owner
     * The cell's current health
