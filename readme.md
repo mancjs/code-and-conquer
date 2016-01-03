@@ -50,20 +50,38 @@ Some squares are worth x2 and x3 points (denoted as the taller squares on the gr
 Each team can select a special role during registration. There are 3 special roles to choose from. A special role can be played at any point during the game, but only once.
 
 ### Minelayer
-...
+A minelayer can place one mine on a square of their choice. The player who trips it loses all their current requests.
 
 ### Cloaker
-...
+A cloaker can mask the health of 3 squares for 5 minutes of gameplay, making them appear to have maximum health to other players.
 
 ### Spy
-...
+A spy can place a redirect on a player, causing their next 15 requests to be sent to a different grid location.
 
 ## Rules
 
-...
+1. All cells are initially owned by the game (a `query` command will show the owner as `cpu`).
+
+2. All `cpu` owned squares start with a health of 60.
+
+3. The team behind the `attack` command that causes the health of a square to drop to 0 will become the new owner of the square, and its health will be set at 120.
+
+4. A `defend` restores 1 health point to a square. Health cannot be restored above 120.
+
+5. A team may `attack` its own squares, and `defend` the squares of other teams.
+
+6. A special role may be played only once during the game.
+
+7. A team that sends an `attack` or `defend` command to a square that has a mine layed will cause the mine to be triggered. A triggered mine wipes the remaining requests of the team that triggers it. Triggering a mine effectively causes a team to be blocked from playing until the next batch of requests is given out (every minute). A mine can only be triggered once.
+
+8. Laying a mine on top of another mine will cause the first mine to trigger as normal, and the second mine to be ineffective. The second mine is wasted.
+
+9. A team that has been spied on will have their subsequent 15 requests (`attack` or `defend`) sent to the grid location selected by the team that spied upon them.
+
+10. A cloak may be enabled on up to 3 cell locations, but no more. A cloak lasts for 5 minutes of game play, causing `query` commands to report the health of the specified cells as 120, regardless of their true health.
 
 ## Replays
 
-After each MancJS session we run this game at, we take a snapshot of the way the game played out on the evening, called replays. Here are our previous replays:
+After each MancJS session we run this game at, we take a snapshot of the way the game played out on the evening. Here are our previous replays:
 
 [October 2015](http://mancjs.com/code-and-conquer/october-2015/replay.html)
