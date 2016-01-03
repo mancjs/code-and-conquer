@@ -28,19 +28,19 @@ Some squares are worth x2 and x3 points (denoted as the taller squares on the gr
 
 5. Using the client, you must send commands to the game server in real time to play your particular strategy. You can send `attack`, `defend` and `query` commands:
 
-  1. `attack` takes 1 health point off the specified cell. If this causes the cell's health to drop to 0, the sender becomes the new owner and the cell's health is set to 120.
+  1. `attack` takes 1 health point off the specified square. If this causes the square's health to drop to 0, the attacker becomes the new owner and the square's health is set to 120.
 
     Each `attack` command uses 1 request.
 
-  2. `defend` adds 1 health point to the specified cell. A cell's health is capped at 120. Any cell on the grid can be defended, including cells not owned by the sender.
+  2. `defend` adds 1 health point to the specified square. A square's health is capped at 120. Any square on the grid can be defended, including squares not owned by the defender.
 
     Each `defend` command uses 1 request.
 
-  3. `query` retrieves the state of the entire grid, or a specific cell. Each cell holds a state which shows:
+  3. `query` retrieves the state of the entire grid, or a specific square. Each square holds a state which shows:
 
-    * The cell's current owner
-    * The cell's current health
-    * The cell's bonux (x1, x2 or x3)
+    * The square's current owner
+    * The square's current health
+    * The square's bonux (x1, x2 or x3)
     * The entire attack and defend history since its last acquisition.
 
     Each `query` command is free, but rate limited, so avoid heavy polling.
@@ -60,15 +60,15 @@ A spy can place a redirect on a player, causing their next 15 requests to be sen
 
 ## Rules
 
-1. All cells are initially owned by the game (a `query` command will show the owner as `cpu`).
+1. All squares are initially owned by the game (a `query` command will show the owner as `cpu`).
 
 2. All `cpu` owned squares start with a health of 60.
 
-3. The team behind the `attack` command that causes the health of a square to drop to 0 will become the new owner of the square, and its health will be set at 120.
+3. The team behind the `attack` command that causes the health of a square to drop to 0 will become the new owner of the square, and the square's health will be set at 120.
 
 4. A `defend` restores 1 health point to a square. Health cannot be restored above 120.
 
-5. A team may `attack` its own squares, and `defend` the squares of other teams.
+5. A team may `attack` their own squares, and `defend` the squares of other teams.
 
 6. A special role may be played only once during the game.
 
@@ -78,7 +78,7 @@ A spy can place a redirect on a player, causing their next 15 requests to be sen
 
 9. A team that has been spied on will have their subsequent 15 requests (`attack` or `defend`) sent to the grid location selected by the team that spied upon them.
 
-10. A cloak may be enabled on up to 3 cell locations, but no more. A cloak lasts for 5 minutes of gameplay, causing `query` commands to report the health of the specified cells as 120, regardless of their true health.
+10. A cloak may be enabled on up to 3 squares, but no more. A cloak lasts for 5 minutes of gameplay, causing `query` commands to report the health of the specified squares as 120, regardless of their true health.
 
 ## Replays
 
