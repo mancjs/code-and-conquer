@@ -1,6 +1,5 @@
 # Code & Conquer
 
-## Game
 Code & Conquer is a programming game in which teams compete to capture squares from a shared grid.
 
 ## Objective
