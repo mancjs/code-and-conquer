@@ -1,18 +1,19 @@
-var db = require('../db/db');
-var grid = require('./grid');
-var log = require('../lib/log');
-var team = require('./team');
-var roles = require('./roles');
-var clone = require('../lib/clone');
-var requests = require('./requests');
+const db = require('../db/db');
+const grid = require('./grid');
+const log = require('../lib/log');
+const team = require('./team');
+const roles = require('./roles');
+const clone = require('../lib/clone');
+const requests = require('./requests');
+const statuses = require('./statuses');
 
-var init = function(gridSize) {
-  var state = db.init();
+const init = gridSize => {
+  const state = db.init();
 
   state.grid = grid.generate(gridSize.width, gridSize.height);
   requests.stopRefreshTimer();
 
-  log('game', 'initialised with ' + gridSize.width + 'x' + gridSize.height + ' grid');
+  log('game', `initialised with ${gridSize.width}x${gridSize.height} grid`);
 };
 
 var stop = function() {
@@ -51,19 +52,19 @@ var loadExistingGame = function() {
 
 var verifyTeam = function(key) {
   if (!db.get().gameStarted) {
-    return { err: 'game not started' };
+    return statuses.gameNotStarted;
   }
 
   if (!team.hasRequests(key)) {
-    return { err: 'no requests left' };
+    return statuses.noRequestsLeft;
   }
 };
 
-var attack = function(key, x, y) {
-  var verificationError = verifyTeam(key);
+const attack = (key, x, y) => {
+  const verificationError = verifyTeam(key);
 
   if (verificationError) {
-    return verificationError;
+    return { status: verificationError };
   }
 
   var redirection = roles.isTeamRedirected(key);
@@ -73,31 +74,37 @@ var attack = function(key, x, y) {
     y = redirection.y;
   }
 
-  var state = db.get();
-  var cell = grid.getCell(state.grid, x, y);
+  const state = db.get();
+  let cell = grid.getCell(state.grid, x, y);
 
   if (!cell) {
-    return { err: ['no cell found at ', x, ',', y].join('') };
+    return { 
+      status: statuses.invalidCell,
+      result: { x, y }  
+    };
   }
 
-  var mineResult = roles.checkMineTrigger(key, x, y);
+  const mineResult = roles.checkMineTrigger(key, x, y);
 
   if (mineResult.triggered) {
     team.useAllRequests(key);
 
     return {
-      requestsRemaining: team.getRequestsRemaining(key),
-      triggeredMine: { owner: mineResult.owner }
+      status: statuses.infoMineTriggered,
+      result: {
+        requestsRemaining: team.getRequestsRemaining(key),
+        owner: mineResult.owner
+      }
     };
   }
 
   cell.health -= 1;
 
-  var teamData = team.getPublicData(key);
+  const teamData = team.getPublicData(key);
 
   if (cell.health <= 0) {
     grid.setCellOwner(cell, teamData);
-    log('game', teamData.name + ' conquered cell ' + x + ',' + y + ' from ' + cell.owner.name);
+    log('game', `${teamData.name} conquered cell ${x},${y} from ${cell.owner.name}`);
   } else {
     grid.addCellAttackHistory(cell, teamData.name, teamData.colour);
   }
@@ -105,7 +112,10 @@ var attack = function(key, x, y) {
   team.useRequest(key);
 
   return {
-    requestsRemaining: team.getRequestsRemaining(key)
+    status: statuses.ok,
+    result: {
+      requestsRemaining: team.getRequestsRemaining(key)
+    }
   };
 };
 

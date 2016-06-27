@@ -140,16 +140,16 @@ var verifySpyRequest = function(request) {
   }
 };
 
-var attack = function(request, response) {
-  var verificationError = verifySingleCellRequest(request);
+// var attack = function(request, response) {
+//   var verificationError = verifySingleCellRequest(request);
 
-  if (verificationError) {
-    return response(types.json(verificationError));
-  }
+//   if (verificationError) {
+//     return response(types.json(verificationError));
+//   }
 
-  var result = engine.attack(request.body.key, request.body.x, request.body.y);
-  return response(types.json(result));
-};
+//   var result = engine.attack(request.body.key, request.body.x, request.body.y);
+//   return response(types.json(result));
+// };
 
 var defend = function(request, response) {
   var verificationError = verifySingleCellRequest(request);

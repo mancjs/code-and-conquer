@@ -1,11 +1,7 @@
 const net = require('net');
 const log = require('../lib/log');
 const commands = require('./commands');
-
-const statuses = {
-  ok: 'ok',
-  missingCommand: 'err.missing_command'
-};
+const statuses = require('./statuses');
 
 const startServer = port => {
   const parseRequest = data => {
@@ -24,7 +20,7 @@ const startServer = port => {
 
   const runCommand = (socket, request) => {
     log('game', `command: ${request}`);
-    
+
     const req = parseRequest(request);
 
     if (!commands[req.name]) {
