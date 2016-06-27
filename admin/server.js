@@ -55,7 +55,7 @@ var startServer = function(port) {
   });
 
   server.listen(port, 'localhost');
-  log('admin', 'listening on :' + port);
+  log('admin', 'listening on ' + port);
 };
 
 module.exports = {

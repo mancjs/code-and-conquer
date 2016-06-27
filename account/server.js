@@ -22,7 +22,7 @@ var startServer = function(port) {
   server.on('connection', ddos.handler);
   server.listen(port);
 
-  log('account', 'listening on :' + port);
+  log('account', 'listening on ' + port);
 };
 
 var buildRequestObject = function(req, callback) {

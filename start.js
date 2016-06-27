@@ -7,5 +7,5 @@ admin.startServer(9000);
 var account = require('./account/server');
 account.startServer(9001);
 
-// var game = require('./game/server');
-// game.startServer(9002);
+var game = require('./game/server');
+game.startServer(9002);
