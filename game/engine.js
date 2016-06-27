@@ -3,7 +3,6 @@ var grid = require('./grid');
 var log = require('../lib/log');
 var team = require('./team');
 var roles = require('./roles');
-var events = require('./events');
 var clone = require('../lib/clone');
 var requests = require('./requests');
 
@@ -97,15 +96,8 @@ var attack = function(key, x, y) {
   var teamData = team.getPublicData(key);
 
   if (cell.health <= 0) {
-    events.squareConquered({
-      coords: { x: x, y: y },
-      previousOwner: cell.owner.name,
-      newOwner: teamData.name
-    });
-
-    log('game', teamData.name + ' conquered cell ' + x + ',' + y + ' from ' + cell.owner.name);
-
     grid.setCellOwner(cell, teamData);
+    log('game', teamData.name + ' conquered cell ' + x + ',' + y + ' from ' + cell.owner.name);
   } else {
     grid.addCellAttackHistory(cell, teamData.name, teamData.colour);
   }

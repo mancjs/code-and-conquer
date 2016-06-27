@@ -1,6 +1,6 @@
 var db = require('../db/db');
-var ddos = require('../api/ddos');
-var game = require('../game/game');
+var ddos = require('../account/ddos');
+var engine = require('../game/engine');
 var registration = require('../registration/registration');
 
 var initGame = function(args) {
@@ -13,7 +13,7 @@ var initGame = function(args) {
     height: parseInt(args.split('x')[1].trim())
   };
 
-  game.init(gridSize);
+  engine.init(gridSize);
 };
 
 var startGame = function() {
@@ -24,7 +24,7 @@ var startGame = function() {
   }
 
   registration.close();
-  game.start();
+  engine.start();
 };
 
 var stopGame = function() {
@@ -35,7 +35,7 @@ var stopGame = function() {
   }
 
   registration.close();
-  game.stop();
+  engine.stop();
 };
 
 var openRegistration = function() {
@@ -72,7 +72,7 @@ var deleteTeam = function(args) {
 
 var getStatus = function() {
   var registrationStatus = registration.getStatus();
-  var gameStatus = game.getStatus();
+  var gameStatus = engine.getStatus();
 
   if (!gameStatus) {
     return 'init game first';
@@ -93,7 +93,7 @@ var getStatus = function() {
 
 var simulate = function() {
   db.init();
-  game.init({ width: 8, height: 8 });
+  engine.init({ width: 8, height: 8 });
   registration.open();
 
   var result1 = registration.createTeam('Team 1', 'a@b.c1', 'minelayer');
@@ -114,10 +114,10 @@ var simulate = function() {
     var y = Math.floor(Math.random() * 8);
 
     state.grid.cells[y][x].health = 1;
-    game.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
+    engine.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
 
     if (i % 2 === 0) {
-      game.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
+      engine.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
     }
   }
 };

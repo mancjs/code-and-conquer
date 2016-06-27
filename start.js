@@ -1,8 +1,11 @@
-var game = require('./game/game');
-game.loadExistingGame();
+var engine = require('./game/engine');
+engine.loadExistingGame();
 
-var api = require('./api/api');
-api.startServer(9000);
+var admin = require('./admin/server');
+admin.startServer(9000);
 
-var admin = require('./admin/admin');
-admin.startServer(9001);
+var account = require('./account/server');
+account.startServer(9001);
+
+// var game = require('./game/server');
+// game.startServer(9002);

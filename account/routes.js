@@ -1,5 +1,5 @@
 var types = require('./types');
-var game = require('../game/game');
+var engine = require('../game/engine');
 var requests = require('../game/requests');
 var registration = require('../registration/registration');
 
@@ -33,7 +33,7 @@ var account = function(request, response) {
 
   var model = {
     team: team,
-    gameStatus: game.getStatus()
+    gameStatus: engine.getStatus()
   };
 
   return response(types.template('account.html', model));
@@ -51,7 +51,7 @@ var accountData = function(request, response) {
   return response(types.json({
     teams: teams,
     requests: team.requests,
-    grid: game.query().grid
+    grid: engine.query().grid
   }));
 };
 
@@ -65,7 +65,7 @@ var overviewData = function(request, response) {
 
 var getOverviewData = function() {
   var refreshSeconds = requests.getSecondsUntilNextRefresh({});
-  var gameData = game.query();
+  var gameData = engine.query();
 
   return {
     grid: gameData.grid,
@@ -147,7 +147,7 @@ var attack = function(request, response) {
     return response(types.json(verificationError));
   }
 
-  var result = game.attack(request.body.key, request.body.x, request.body.y);
+  var result = engine.attack(request.body.key, request.body.x, request.body.y);
   return response(types.json(result));
 };
 
@@ -158,12 +158,12 @@ var defend = function(request, response) {
     return response(types.json(verificationError));
   }
 
-  var result = game.defend(request.body.key, request.body.x, request.body.y);
+  var result = engine.defend(request.body.key, request.body.x, request.body.y);
   return response(types.json(result));
 };
 
 var query = function(request, response) {
-  var result = game.query();
+  var result = engine.query();
   return response(types.json(result));
 };
 
@@ -174,7 +174,7 @@ var mine = function(request, response) {
     return response(types.json(verificationError));
   }
 
-  var result = game.layMine(request.body.key, request.body.x, request.body.y);
+  var result = engine.layMine(request.body.key, request.body.x, request.body.y);
   return response(types.json(result));
 };
 
@@ -185,7 +185,7 @@ var cloak = function(request, response) {
     return response(types.json(verificationError));
   }
 
-  var result = game.cloak(request.body.key, request.body.cells);
+  var result = engine.cloak(request.body.key, request.body.cells);
   return response(types.json(result));
 };
 
@@ -196,7 +196,7 @@ var spy = function(request, response) {
     return response(types.json(verificationError));
   }
 
-  var result = game.spy(request.body.key, request.body.teamName, request.body.x, request.body.y);
+  var result = engine.spy(request.body.key, request.body.teamName, request.body.x, request.body.y);
   return response(types.json(result));
 };
 
@@ -209,13 +209,13 @@ module.exports = {
   'GET /api/account-data': accountData,
 
   'GET /overview': overview,
-  'GET /api/overview-data': overviewData,
+  'GET /api/overview-data': overviewData
 
-  'POST /game/attack': attack,
-  'POST /game/defend': defend,
-  'GET /game/query': query,
+  // 'POST /game/attack': attack,
+  // 'POST /game/defend': defend,
+  // 'GET /game/query': query,
 
-  'POST /game/role/mine': mine,
-  'POST /game/role/cloak': cloak,
-  'POST /game/role/spy': spy,
+  // 'POST /game/role/mine': mine,
+  // 'POST /game/role/cloak': cloak,
+  // 'POST /game/role/spy': spy
 };

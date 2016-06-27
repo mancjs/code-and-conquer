@@ -9,10 +9,10 @@ var staticFileHandler = require('./file-handler');
 var startServer = function(port) {
   var handler = function(req, res) {
     return buildRequestObject(req, function(requestData) {
-      var handler = routes[requestData.key] || staticFileHandler;
+      var routeHandler = routes[requestData.key] || staticFileHandler;
 
-      return handler(requestData, function(response) {
-        return serve(res, response);
+      return routeHandler(requestData, function(responseData) {
+        return serve(res, responseData);
       });
     });
   };
@@ -22,7 +22,7 @@ var startServer = function(port) {
   server.on('connection', ddos.handler);
   server.listen(port);
 
-  log('api', 'listening on :' + port);
+  log('account', 'listening on :' + port);
 };
 
 var buildRequestObject = function(req, callback) {
