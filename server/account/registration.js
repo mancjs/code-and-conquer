@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-var db = require('../../db/db');
+var db = require('../../lib/db');
 var log = require('../../lib/log');
 var colours = require('../../lib/colours');
 

@@ -1,4 +1,4 @@
-var db = require('../../db/db');
+var db = require('../../lib/db');
 
 const config = require('../../config');
 

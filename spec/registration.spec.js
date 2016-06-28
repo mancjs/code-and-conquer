@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-var db = require('../db/db');
+var db = require('../lib/db');
 var expect = require('expect.js');
 var colours = require('../lib/colours');
 var registration = require('../server/account/registration');

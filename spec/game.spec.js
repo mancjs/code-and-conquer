@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-const db = require('../db/db');
+const db = require('../lib/db');
 const expect = require('expect.js');
 const engine = require('../server/game/engine');
 const grid = require('../server/game/grid');

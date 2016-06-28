@@ -1,4 +1,4 @@
-const db = require('../../db/db');
+const db = require('../../lib/db');
 const grid = require('./grid');
 const log = require('../../lib/log');
 const team = require('./team');
