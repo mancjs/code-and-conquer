@@ -1,10 +1,10 @@
-var log = require('../../lib/log');
+const log = require('../../lib/log');
 
-var clients = {};
-var enabled = false;
-var unbanInterval;
+let clients = {};
+let enabled = false;
+let unbanInterval;
 
-var enable = function(on) {
+const enable = on => {
   enabled = on;
 
   if (enabled) {
@@ -17,19 +17,23 @@ var enable = function(on) {
   }
 };
 
-var isEnabled = function() {
+const isEnabled = () => {
   return enabled;
 };
 
-var handler = function(socket) {
+const handler = socket => {
   if (!enabled) {
     return;
   }
 
-  var address = socket.remoteAddress;
+  const address = socket.remoteAddress;
 
   if (!clients[address]) {
-    clients[address] = { requests: 1, banned: false, added: new Date().getTime() };
+    clients[address] = {
+      requests: 1,
+      banned: false,
+      added: new Date().getTime()
+    };
     return;
   }
 
@@ -41,17 +45,17 @@ var handler = function(socket) {
 
   if (clients[address].requests >= 1000) {
     clients[address].banned = true;
-    log('ddos', 'ban added ' + address);
+    log('ddos', `ban added ${address}`);
   }
 };
 
-var clearBans = function() {
-  Object.keys(clients).forEach(function(address) {
-    var duration = new Date().getTime() - clients[address].added;
+const clearBans = () => {
+  Object.keys(clients).forEach(address => {
+    const duration = new Date().getTime() - clients[address].added;
 
     if (duration >= 1 * 60 * 1000) {
       if (clients[address].banned) {
-        log('ddos', 'ban cleared ' + address);
+        log('ddos', `ban cleared ${address}`);
       }
 
       delete clients[address];
@@ -59,19 +63,19 @@ var clearBans = function() {
   });
 };
 
-var getData = function() {
+const getData = () => {
   return clients;
 };
 
-var clear = function() {
+const clear = () => {
   clients = {};
   log('ddos', 'all cleared');
 };
 
 module.exports = {
-  handler: handler,
-  enable: enable,
-  isEnabled: isEnabled,
-  getData: getData,
-  clear: clear
+  handler,
+  enable,
+  isEnabled,
+  getData,
+  clear
 };
