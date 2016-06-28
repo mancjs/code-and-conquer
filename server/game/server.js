@@ -20,13 +20,13 @@ const startServer = () => {
   };
 
   const runCommand = (socket, request) => {
-    log('game', `command: ${request}`);
-
     const req = parseRequest(request);
 
     if (!commands[req.name]) {
       return sendStatus(socket, { status: statuses.missingCommand });
     }
+
+    log('game', `command: ${request}`);
 
     return sendStatus(socket, commands[req.name](req.team, req.args));
   };

@@ -6,6 +6,8 @@ module.exports = {
   },
   game: {
     bonus: { x2: 0.1, x3: 0.05 },
+    health: { cpu: 60, player: 120 },
+    requests: { refresh: 20, amount: 30 },
     roles: {}
   }
 };

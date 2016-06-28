@@ -3,6 +3,8 @@ var db = require('../../db/db');
 var log = require('../../lib/log');
 var colours = require('../../lib/colours');
 
+const config = require('../../config');
+
 var roles = ['minelayer', 'cloaker', 'spy'];
 
 var createKey = function() {
@@ -74,7 +76,7 @@ var createTeam = function(name, email, role) {
     role: role,
     name: name,
     email: email,
-    requests: 30
+    requests: config.game.requests.amount
   };
 
   db.get().teams.push(team);

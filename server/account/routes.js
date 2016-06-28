@@ -3,6 +3,8 @@ var engine = require('../game/engine');
 var requests = require('../game/requests');
 var registration = require('./registration');
 
+const config = require('../../config');
+
 var root = function(request, response) {
   return response(types.redirect('/register'));
 };
@@ -70,7 +72,8 @@ var getOverviewData = function() {
   return {
     grid: response.result.grid,
     gameStarted: response.result.gameStarted,
-    refreshSeconds: (refreshSeconds < 10) ? ('0' + refreshSeconds) : refreshSeconds
+    refreshSeconds: (refreshSeconds < 10) ? ('0' + refreshSeconds) : refreshSeconds,
+    secondsPerRound: config.game.requests.refresh
   };
 };
 

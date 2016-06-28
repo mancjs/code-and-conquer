@@ -6,6 +6,7 @@ const engine = require('../server/game/engine');
 const grid = require('../server/game/grid');
 const roles = require('../server/game/roles');
 const statuses = require('../server/game/statuses');
+const config = require('../config');
 
 beforeEach(() => {
   db.init();
@@ -51,7 +52,7 @@ describe('game', () => {
           expect(cell.bonus).to.be.above(0);
 
           // all cells should have health of 60
-          expect(cell.health).to.be(60);
+          expect(cell.health).to.be(config.game.health.cpu);
 
           // all cells should be owned by CPU
           expect(cell.owner.name).to.be('cpu');
@@ -209,7 +210,7 @@ describe('game', () => {
 
       engine.attack('team-1', 1, 1);
 
-      expect(cell.health).to.be(120);
+      expect(cell.health).to.be(config.game.health.player);
       expect(cell.owner.name).to.be('Team 1');
       expect(Object.keys(cell.history.attacks).length).to.be(0);
       expect(Object.keys(cell.history.defends).length).to.be(0);
@@ -251,8 +252,8 @@ describe('game', () => {
       // team-1 attacks cell 0,0 once
       engine.attack('team-1', 0, 0);
 
-      // team-2 attacks cell 0,1 60 times
-      for (let i = 0; i < 60; i++) {
+      // team-2 attacks cell 0,1 enough times to own it
+      for (let i = 0; i < config.game.health.cpu; i++) {
         engine.attack('team-2', 0, 1);
       }
 
@@ -267,7 +268,7 @@ describe('game', () => {
       // cell 0,0 has one attack from team-1
       const cell1 = result.result.grid[0][0];
 
-      expect(cell1.health).to.be(59);
+      expect(cell1.health).to.be(config.game.health.cpu - 1);
       expect(cell1.owner.name).to.be('cpu');
       expect(cell1.owner.colour).not.be(undefined);
       expect(Object.keys(cell1.history.attacks).length).to.be(1);
@@ -277,7 +278,7 @@ describe('game', () => {
       // cell 0,1 gets conquered by team-2
       const cell2 = result.result.grid[1][0];
 
-      expect(cell2.health).to.be(120);
+      expect(cell2.health).to.be(config.game.health.player);
       expect(cell2.owner.name).to.be('Team 2');
       expect(cell2.owner.colour).to.be(team2.colour);
       expect(Object.keys(cell2.history.attacks).length).to.be(0);
@@ -286,7 +287,7 @@ describe('game', () => {
       // cell 0,2 has three attacks and one defend from team-3
       const cell3 = result.result.grid[2][0];
 
-      expect(cell3.health).to.be(58);
+      expect(cell3.health).to.be(config.game.health.cpu - 2);
       expect(cell3.owner.name).to.be('cpu');
       expect(cell3.owner.colour).not.be(undefined);
       expect(Object.keys(cell3.history.attacks).length).to.be(1);

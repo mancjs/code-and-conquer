@@ -2,26 +2,31 @@
 
 const config = require('../../config');
 
+let generated = {};
+
 var generateRandomCoords = function(width, height, count) {
   var coords = [];
-  var generated = {};
 
   for (var i = 0; i < count; i++) {
-    var x = Math.floor(Math.random() * width);
-    var y = Math.floor(Math.random() * height);
+    let generating = true;
 
-    generated[x.toString() + y.toString()] = true;
+    while (generating) {
+      const x = Math.floor(Math.random() * width);
+      const y = Math.floor(Math.random() * height);
+      
+      const key = `${x},${y}`;
 
-    coords.push({
-      x: x,
-      y: y
-    });
+      if (generated[key]) {
+        continue;
+      }
+
+      generated[key] = true;
+      coords.push({ x, y });
+      break;
+    }
   }
 
-  return {
-    coords: coords,
-    count: Object.keys(generated).length
-  };
+  return { coords };
 };
 
 var applyBonusSquares = function(cells, coords, bonus) {
@@ -31,12 +36,14 @@ var applyBonusSquares = function(cells, coords, bonus) {
 };
 
 var generate = function(width, height) {
+  generated = {};
+
   var cells = [];
 
   var preownedState = function() {
     return {
       bonus: 1,
-      health: 60,
+      health: config.game.health.cpu,
       history: {
         attacks: {},
         defends: {}
@@ -57,18 +64,21 @@ var generate = function(width, height) {
 
   const { x2, x3 } = config.game.bonus;
 
-  var double = generateRandomCoords(width, height, Math.ceil(width * height * x2));
+  const x2Count = Math.ceil(width * height * x2);
+  const x3Count = Math.ceil(width * height * x3); 
+
+  var double = generateRandomCoords(width, height, x2Count);
   applyBonusSquares(cells, double.coords, 2);
 
-  var triple = generateRandomCoords(width, height, Math.ceil(width * height * x3));
+  var triple = generateRandomCoords(width, height, x3Count);
   applyBonusSquares(cells, triple.coords, 3);
 
   return {
     cells: cells,
     width: width,
     height: height,
-    doubleSquares: double.count,
-    tripleSquares: triple.count
+    doubleSquares: x2Count,
+    tripleSquares: x3Count
   };
 };
 

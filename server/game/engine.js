@@ -6,6 +6,7 @@ const roles = require('./roles');
 const clone = require('../../lib/clone');
 const requests = require('./requests');
 const statuses = require('./statuses');
+const config = require('../../config');
 
 const verifyTeam = (key) => {
   if (!db.get().gameStarted) {
@@ -185,7 +186,8 @@ const defend = (key, x, y) => {
 
   cell.health += 1;
 
-  const maxHealth = (cell.owner.name === 'cpu') ? 60 : 120;
+  const { cpu, player } = config.game.health;
+  const maxHealth = (cell.owner.name === 'cpu') ? cpu : player;
 
   if (cell.health > maxHealth) {
     cell.health = maxHealth;

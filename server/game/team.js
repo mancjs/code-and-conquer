@@ -1,5 +1,7 @@
 var db = require('../../db/db');
 
+const config = require('../../config');
+
 var getByKey = function(key) {
   return db.get().teams.filter(function(team) {
     return team.key === key;
@@ -29,7 +31,7 @@ var useAllRequests = function(key) {
 
 var resetRequests = function() {
   db.get().teams.forEach(function(team) {
-    team.requests = 30;
+    team.requests = config.game.requests.amount;
   });
 };
 

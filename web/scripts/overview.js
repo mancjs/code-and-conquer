@@ -38,7 +38,7 @@
 
     if (!isNaN(seconds)) {
       if (seconds <= 0) {
-        seconds = 60;
+        seconds = $refreshSeconds.getAttribute('data-refresh');
       }
 
       $refreshSeconds.innerText = (seconds < 10) ? ('0' + seconds) : seconds;
