@@ -1,39 +1,39 @@
-var fs = require('graceful-fs');
-var path = require('path');
-var types = require('./types');
+const fs = require('graceful-fs');
+const path = require('path');
+const types = require('./types');
 
-var supportedTypes = {
+const supportedTypes = {
   '.js': 'application/javascript',
   '.css': 'text/css',
   '.png': 'image/png'
 };
 
-var validExtension = function(url) {
+const validExtension = url => {
   return Object.keys(supportedTypes).indexOf(path.extname(url)) !== -1;
 };
 
-var getMimeType = function(url) {
+const getMimeType = url => {
   return supportedTypes[path.extname(url)];
 };
 
-var staticFileHandler = function(request, response) {
+const staticFileHandler = (request, response) => {
   if (!validExtension(request.url)) {
     return response(types.error(404));
   }
 
-  var filePath = path.join(process.cwd(), '/web', request.url);
+  const filePath = path.join(process.cwd(), '/web', request.url);
 
-  return fs.stat(filePath, function(err, stats) {
+  return fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
       return response(types.error(404));
     }
 
-    return fs.readFile(filePath, function(err, data) {
+    return fs.readFile(filePath, (err, data) => {
       if (err) {
         return response(types.error(500));
       }
 
-      var mime = getMimeType(filePath);
+      const mime = getMimeType(filePath);
       return response(types.file(data, mime));
     });
   });
