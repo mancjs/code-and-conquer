@@ -1,7 +1,7 @@
 var crypto = require('crypto');
-var db = require('../db/db');
-var log = require('../lib/log');
-var colours = require('../lib/colours');
+var db = require('../../db/db');
+var log = require('../../lib/log');
+var colours = require('../../lib/colours');
 
 var roles = ['minelayer', 'cloaker', 'spy'];
 

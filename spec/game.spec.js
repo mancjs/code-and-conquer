@@ -2,10 +2,10 @@
 
 const db = require('../db/db');
 const expect = require('expect.js');
-const engine = require('../game/engine');
-const grid = require('../game/grid');
-const roles = require('../game/roles');
-const statuses = require('../game/statuses');
+const engine = require('../server/game/engine');
+const grid = require('../server/game/grid');
+const roles = require('../server/game/roles');
+const statuses = require('../server/game/statuses');
 
 beforeEach(() => {
   db.init();

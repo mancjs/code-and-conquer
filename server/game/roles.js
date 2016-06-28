@@ -1,5 +1,5 @@
-var db = require('../db/db');
-var log = require('../lib/log');
+var db = require('../../db/db');
+var log = require('../../lib/log');
 
 var test = {
   timeOverride: null

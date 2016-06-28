@@ -1,9 +1,9 @@
-const db = require('../db/db');
+const db = require('../../db/db');
 const grid = require('./grid');
-const log = require('../lib/log');
+const log = require('../../lib/log');
 const team = require('./team');
 const roles = require('./roles');
-const clone = require('../lib/clone');
+const clone = require('../../lib/clone');
 const requests = require('./requests');
 const statuses = require('./statuses');
 

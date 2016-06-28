@@ -1,7 +1,7 @@
 var querystring = require('querystring');
 var http = require('http');
 var ddos = require('./ddos');
-var log = require('../lib/log');
+var log = require('../../lib/log');
 
 var routes = require('./routes');
 var staticFileHandler = require('./file-handler');

@@ -1,4 +1,4 @@
-var log = require('../lib/log');
+var log = require('../../lib/log');
 
 var clients = {};
 var enabled = false;

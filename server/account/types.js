@@ -1,5 +1,5 @@
 var fs = require('graceful-fs');
-var tmpl = require('../lib/tmpl');
+var tmpl = require('../../lib/tmpl');
 
 var templates = {
   'register.html': fs.readFileSync(process.cwd() + '/web/templates/register.html').toString(),

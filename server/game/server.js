@@ -1,5 +1,5 @@
 const net = require('net');
-const log = require('../lib/log');
+const log = require('../../lib/log');
 const commands = require('./commands');
 const statuses = require('./statuses');
 

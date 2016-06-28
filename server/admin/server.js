@@ -1,5 +1,5 @@
 var net = require('net');
-var log = require('../lib/log');
+var log = require('../../lib/log');
 var commands = require('./commands');
 
 var startServer = function(port) {

@@ -2,7 +2,7 @@
 
 var db = require('../db/db');
 var expect = require('expect.js');
-var requests = require('../game/requests');
+var requests = require('../server/game/requests');
 
 describe('requests', function() {
   beforeEach(function() {

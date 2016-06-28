@@ -1,5 +1,5 @@
 var team = require('./team');
-var log = require('../lib/log');
+var log = require('../../lib/log');
 
 var interval;
 var lastRefresh;

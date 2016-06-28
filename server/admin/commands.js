@@ -1,4 +1,4 @@
-var db = require('../db/db');
+var db = require('../../db/db');
 var ddos = require('../account/ddos');
 var engine = require('../game/engine');
 var registration = require('../account/registration');

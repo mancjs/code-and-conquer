@@ -1,4 +1,4 @@
-var db = require('../db/db');
+var db = require('../../db/db');
 
 var getByKey = function(key) {
   return db.get().teams.filter(function(team) {
