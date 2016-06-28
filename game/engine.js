@@ -7,6 +7,26 @@ const clone = require('../lib/clone');
 const requests = require('./requests');
 const statuses = require('./statuses');
 
+const verifyTeam = (key) => {
+  if (!db.get().gameStarted) {
+    return statuses.gameNotStarted;
+  }
+
+  if (!team.hasRequests(key)) {
+    return statuses.noRequestsLeft;
+  }
+};
+
+const roleVerify = (key, role) => {
+  if (!roles.verify(key, role)) {
+    return statuses.roleNotAssigned;
+  }
+
+  if (roles.roleUsed(key)) {
+    return statuses.roleAlreadyUsed;
+  }
+};
+
 const init = gridSize => {
   const state = db.init();
 
@@ -16,8 +36,45 @@ const init = gridSize => {
   log('game', `initialised with ${gridSize.width}x${gridSize.height} grid`);
 };
 
-var stop = function() {
-  var state = db.get();
+const loadExistingGame = () => {
+  const state = db.load();
+
+  if (state.gameStarted) {
+    requests.startRefreshTimer();
+    log('game', `loaded game from ${new Date(state.date)}`);
+  }
+};
+
+const getStatus = () => {
+  const state = db.get();
+
+  if (!state.grid) {
+    return null;
+  }
+
+  return {
+    started: state.gameStarted,
+    width: state.grid.width || 0,
+    height: state.grid.height || 0,
+    doubleSquares: state.grid.doubleSquares || 0,
+    tripleSquares: state.grid.tripleSquares || 0
+  };
+};
+
+const start = () => {
+  const state = db.get();
+
+  state.gameStarted = true;
+
+  if (process.env.NODE_ENV !== 'test') {
+    requests.startRefreshTimer();
+  }
+
+  log('game', 'started');
+};
+
+const stop = () => {
+  const state = db.get();
 
   state.gameStarted = false;
 
@@ -29,37 +86,6 @@ var stop = function() {
   log('game', 'stopped');
 };
 
-var start = function() {
-  var state = db.get();
-
-  state.gameStarted = true;
-
-  if (process.env.NODE_ENV !== 'test') {
-    requests.startRefreshTimer();
-  }
-
-  log('game', 'started');
-};
-
-var loadExistingGame = function() {
-  var state = db.load();
-
-  if (state.gameStarted) {
-    requests.startRefreshTimer();
-    log('game', 'loaded game from ' + new Date(state.date));
-  }
-};
-
-var verifyTeam = function(key) {
-  if (!db.get().gameStarted) {
-    return statuses.gameNotStarted;
-  }
-
-  if (!team.hasRequests(key)) {
-    return statuses.noRequestsLeft;
-  }
-};
-
 const attack = (key, x, y) => {
   const verificationError = verifyTeam(key);
 
@@ -67,7 +93,7 @@ const attack = (key, x, y) => {
     return { status: verificationError };
   }
 
-  var redirection = roles.isTeamRedirected(key);
+  const redirection = roles.isTeamRedirected(key);
 
   if (redirection) {
     x = redirection.x;
@@ -203,146 +229,143 @@ const query = () => {
   };
 };
 
-const roleVerify = (key, role) => {
+const mine = (key, x, y) => {
   const verificationError = verifyTeam(key);
 
   if (verificationError) {
-    return verificationError;
+    return { status: verificationError };
   }
 
-  if (!roles.verify(key, role)) {
-    return { err: 'you are not a ' + role };
+  const roleError = roleVerify(key, 'minelayer');
+
+  if (roleError) {
+    return { status: roleError };
   }
 
-  if (roles.roleUsed(key)) {
-    return { err: 'you can only play a role once' };
-  }
-
-  return {
-    ok: true
-  };
-};
-
-var layMine = function(key, x, y) {
-  var result = roleVerify(key, 'minelayer');
-
-  if (result.err) {
-    return result;
-  }
-
-  var state = db.get();
-  var cell = grid.getCell(state.grid, x, y);
+  const state = db.get();
+  const cell = grid.getCell(state.grid, x, y);
 
   if (!cell) {
-    return { err: ['no cell found at ', x, ',', y].join('') };
+    return { 
+      status: statuses.invalidCell,
+      result: { x, y }  
+    };
   }
 
   team.useRequest(key);
   roles.useRole(key);
 
-  var mineResult = roles.checkMineTrigger(key, x, y);
+  const mineResult = roles.checkMineTrigger(key, x, y);
 
   if (mineResult.triggered) {
     team.useAllRequests(key);
 
     return {
-      requestsRemaining: team.getRequestsRemaining(key),
-      triggeredMine: { owner: mineResult.owner }
+      status: statuses.infoMineTriggered,
+      result: {
+        requestsRemaining: team.getRequestsRemaining(key),
+        owner: mineResult.owner
+      }
     };
   }
 
   roles.setMine(key, x, y);
 
   return {
-    requestsRemaining: team.getRequestsRemaining(key)
+    status: statuses.ok,
+    result: {
+      requestsRemaining: team.getRequestsRemaining(key)
+    }
   };
 };
 
-var cloak = function(key, cells) {
-  var result = roleVerify(key, 'cloaker');
+const cloak = (key, cells) => {
+  const roleError = roleVerify(key, 'cloaker');
 
-  if (result.err) {
-    return result;
+  if (roleError) {
+    return { status: roleError };
   }
 
   if (cells.length > 3) {
-    return { err: 'cloakers can cloak up to 3 cells max' };
+    return { 
+      status: statuses.roleTooManyCells,
+      result: { maxCells: 3 } 
+    };
   }
 
-  var state = db.get();
+  const state = db.get();
 
-  for (var i = 0; i < cells.length; i++) {
-    var cell = grid.getCell(state.grid, cells[i].x, cells[i].y);
+  for (let i = 0; i < cells.length; i++) {
+    const cell = grid.getCell(state.grid, cells[i].x, cells[i].y);
 
     if (!cell) {
-      return { err: ['no cell found at ', cells[i].x, ',', cells[i].y].join('') };
+      return { 
+        status: statuses.invalidCell,
+        result: { x: cells[i].x, y: cells[i].y }  
+      };
     }
   }
 
   roles.setCloak(key, cells);
-
   team.useRequest(key);
   roles.useRole(key);
 
   return {
-    requestsRemaining: team.getRequestsRemaining(key)
+    status: statuses.ok,
+    result: {
+      requestsRemaining: team.getRequestsRemaining(key)
+    }
   };
 };
 
-var spy = function(key, teamName, x, y) {
-  var result = roleVerify(key, 'spy');
+const spy = (key, teamName, x, y) => {
+  const roleError = roleVerify(key, 'spy');
 
-  if (result.err) {
-    return result;
+  if (roleError) {
+    return { status: roleError };
   }
 
   if (!team.existsByName(teamName)) {
-    return { err: 'team not found: ' + teamName };
+    return { 
+      status: statuses.roleTeamNotFound,
+      result: {
+        team: teamName
+      } 
+    };
   }
 
-  var state = db.get();
-  var cell = grid.getCell(state.grid, x, y);
+  const state = db.get();
+  const cell = grid.getCell(state.grid, x, y);
 
   if (!cell) {
-    return { err: ['no cell found at ', x, ',', y].join('') };
+    return { 
+      status: statuses.invalidCell,
+      result: { x, y }  
+    };
   }
 
   roles.setSpy(key, teamName, x, y);
-
   team.useRequest(key);
   roles.useRole(key);
 
   return {
-    requestsRemaining: team.getRequestsRemaining(key)
-  };
-};
-
-var getStatus = function() {
-  var state = db.get();
-
-  if (!state.grid) {
-    return null;
-  }
-
-  return {
-    started: state.gameStarted,
-    width: state.grid.width || 0,
-    height: state.grid.height || 0,
-    doubleSquares: state.grid.doubleSquares || 0,
-    tripleSquares: state.grid.tripleSquares || 0
+    status: statuses.ok,
+    result: {
+      requestsRemaining: team.getRequestsRemaining(key)
+    }
   };
 };
 
 module.exports = {
-  init: init,
-  stop: stop,
-  start: start,
-  attack: attack,
-  defend: defend,
-  query: query,
-  layMine: layMine,
-  cloak: cloak,
-  spy: spy,
-  getStatus: getStatus,
-  loadExistingGame: loadExistingGame
+  init,
+  loadExistingGame,
+  getStatus,
+  start,
+  stop,
+  attack,
+  defend,
+  query,
+  mine,
+  cloak,
+  spy  
 };

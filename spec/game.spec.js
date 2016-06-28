@@ -311,14 +311,14 @@ describe('game', () => {
 
       state.teams.push(team1, team2, team3);
 
-      const result1 = engine.layMine(team3.key, 0, 0);
-      expect(result1.err).to.match(/you are not a minelayer/);
+      const result1 = engine.mine(team3.key, 0, 0);
+      expect(result1.status).to.be(statuses.roleNotAssigned);
 
       const result2 = engine.cloak(team1.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
-      expect(result2.err).to.match(/you are not a cloaker/);
+      expect(result2.status).to.be(statuses.roleNotAssigned);
 
       const result3 = engine.spy(team2.key, team1.name);
-      expect(result3.err).to.match(/you are not a spy/);
+      expect(result3.status).to.be(statuses.roleNotAssigned);
     });
 
     it('only allows a role to be played once', () => {
@@ -330,26 +330,26 @@ describe('game', () => {
 
       state.teams.push(team1, team2, team3);
 
-      const result1 = engine.layMine(team1.key, 0, 0);
-      expect(result1.err).to.be(undefined);
-      expect(result1.requestsRemaining).to.be(1);
+      const result1 = engine.mine(team1.key, 0, 0);
+      expect(result1.status).to.be(statuses.ok);
+      expect(result1.result.requestsRemaining).to.be(1);
 
-      const error1 = engine.layMine(team1.key, 0, 0);
-      expect(error1.err).to.match(/you can only play a role once/);
+      const error1 = engine.mine(team1.key, 0, 0);
+      expect(error1.status).to.be(statuses.roleAlreadyUsed);
 
       const result2 = engine.cloak(team2.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
-      expect(result2.err).to.be(undefined);
-      expect(result2.requestsRemaining).to.be(1);
+      expect(result2.status).to.be(statuses.ok);
+      expect(result2.result.requestsRemaining).to.be(1);
 
       const error2 = engine.cloak(team2.key, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }]);
-      expect(error2.err).to.match(/you can only play a role once/);
+      expect(error2.status).to.be(statuses.roleAlreadyUsed);
 
       const result3 = engine.spy(team3.key, team1.name, 0, 0);
-      expect(result3.err).to.be(undefined);
-      expect(result3.requestsRemaining).to.be(1);
+      expect(result3.status).to.be(statuses.ok);
+      expect(result3.result.requestsRemaining).to.be(1);
 
       const error3 = engine.spy(team3.key, team1.name);
-      expect(error3.err).to.match(/you can only play a role once/);
+      expect(error3.status).to.be(statuses.roleAlreadyUsed);
     });
 
     it('rejects mine lays at invalid cells', () => {
@@ -357,8 +357,10 @@ describe('game', () => {
 
       state.teams.push({ key: 'team-1', role: 'minelayer', requests: 1 });
 
-      const result = engine.layMine('team-1', 42, 42);
-      expect(result.err).to.match(/no cell found at 42,42/);
+      const result = engine.mine('team-1', 42, 42);
+      expect(result.status).to.be(statuses.invalidCell);
+      expect(result.result.x).to.be(42);
+      expect(result.result.y).to.be(42);
     });
 
     it('stores successful mine lay in state', () => {
@@ -366,9 +368,9 @@ describe('game', () => {
 
       state.teams.push({ key: 'team-1', name: 'Team 1', role: 'minelayer', requests: 1 });
 
-      const result = engine.layMine('team-1', 4, 5);
+      const result = engine.mine('team-1', 4, 5);
 
-      expect(result.err).to.be(undefined);
+      expect(result.status).to.be(statuses.ok);
       expect(state.roleData.mines['4,5'].owner).to.be('Team 1');
       expect(state.roleData.mines['4,5'].triggered).to.be(false);
     });
@@ -382,9 +384,9 @@ describe('game', () => {
 
       state.teams.push(team1, team2, team3);
 
-      const result1 = engine.layMine('team-1', 2, 2);
-      expect(result1.err).to.be(undefined);
-      expect(result1.requestsRemaining).to.be(29);
+      const result1 = engine.mine('team-1', 2, 2);
+      expect(result1.status).to.be(statuses.ok);
+      expect(result1.result.requestsRemaining).to.be(29);
       expect(state.grid.cells[2][2].health).to.be(60);
 
       expect(state.roleData.mines['2,2'].triggered).to.be(false);
@@ -406,7 +408,7 @@ describe('game', () => {
       expect(team1.mineTriggeredBy).to.be('Team 2');
 
       const result3 = engine.attack('team-3', 2, 2);
-      expect(result3.err).to.be(undefined);
+      expect(result3.status).to.be(statuses.ok);
       expect(result3.result.requestsRemaining).to.be(29);
     });
 
@@ -418,16 +420,16 @@ describe('game', () => {
 
       state.teams.push(team1, team2);
 
-      const result1 = engine.layMine('team-1', 5, 5);
-      expect(result1.err).to.be(undefined);
-      expect(result1.requestsRemaining).to.be(29);
+      const result1 = engine.mine('team-1', 5, 5);
+      expect(result1.status).to.be(statuses.ok);
+      expect(result1.result.requestsRemaining).to.be(29);
       expect(state.grid.cells[5][5].health).to.be(60);
       expect(team1.requests).to.be(29);
 
-      const result2 = engine.layMine('team-2', 5, 5);
-      expect(result2.err).to.be(undefined);
-      expect(result2.requestsRemaining).to.be(0);
-      expect(result2.triggeredMine.owner).to.be('Team 1');
+      const result2 = engine.mine('team-2', 5, 5);
+      expect(result2.status).to.be(statuses.infoMineTriggered);
+      expect(result2.result.requestsRemaining).to.be(0);
+      expect(result2.result.owner).to.be('Team 1');
       expect(state.grid.cells[5][5].health).to.be(60);
       expect(team2.requests).to.be(0);
 
@@ -439,8 +441,8 @@ describe('game', () => {
 
       team2.requests = 30;
 
-      const result3 = engine.layMine('team-2', 5, 5);
-      expect(result3.err).to.match(/you can only play a role once/);
+      const result3 = engine.mine('team-2', 5, 5);
+      expect(result3.status).to.be(statuses.roleAlreadyUsed);
       expect(team2.requests).to.be(30);
     });
 
@@ -459,7 +461,8 @@ describe('game', () => {
       ];
 
       const result = engine.cloak('team-1', cells);
-      expect(result.err).to.match(/cloakers can cloak up to 3 cells max/);
+      expect(result.status).to.be(statuses.roleTooManyCells);
+      expect(result.result.maxCells).to.be(3);
       expect(team.requests).to.be(30);
     });
 
@@ -478,7 +481,9 @@ describe('game', () => {
       ];
 
       const result1 = engine.cloak('team-1', cells1);
-      expect(result1.err).to.match(/no cell found at 2,42/);
+      expect(result1.status).to.be(statuses.invalidCell);
+      expect(result1.result.x).to.be(2);
+      expect(result1.result.y).to.be(42);
       expect(team1.requests).to.be(30);
 
       const cells2 = [
@@ -488,7 +493,9 @@ describe('game', () => {
       ];
 
       const result2 = engine.cloak('team-2', cells2);
-      expect(result2.err).to.match(/no cell found at 12,0/);
+      expect(result2.status).to.be(statuses.invalidCell);
+      expect(result2.result.x).to.be(12);
+      expect(result2.result.y).to.be(0);
       expect(team2.requests).to.be(30);
     });
 
@@ -506,7 +513,7 @@ describe('game', () => {
       ];
 
       const result = engine.cloak('team-1', cells);
-      expect(result.err).to.be(undefined);
+      expect(result.status).to.be(statuses.ok);
       expect(team.requests).to.be(29);
 
       expect(state.roleData.cloaks[0].cloakTime).to.be.within((new Date).getTime() - 5000, (new Date).getTime());
@@ -543,7 +550,7 @@ describe('game', () => {
       state.grid.cells[5][4].history.defends['Team 2'] = 5;
 
       const result = engine.cloak('team-1', [ { x: 2, y: 3 }, { x: 4, y: 5 } ]);
-      expect(result.err).to.be(undefined);
+      expect(result.status).to.be(statuses.ok);
       expect(team.requests).to.be(29);
 
       const queryState1 = engine.query();
@@ -580,11 +587,14 @@ describe('game', () => {
       state.teams.push(team1, team2);
 
       const result1 = engine.spy('team-1', 'Unknown Team', 4, 4);
-      expect(result1.err).to.match(/team not found: Unknown Team/);
+      expect(result1.status).to.be(statuses.roleTeamNotFound);
+      expect(result1.result.team).to.be('Unknown Team');
       expect(team1.requests).to.be(30);
 
       const result2 = engine.spy('team-1', 'Team 2', 42, 4);
-      expect(result2.err).to.match(/no cell found at 42,4/);
+      expect(result2.status).to.be(statuses.invalidCell);
+      expect(result2.result.x).to.be(42);
+      expect(result2.result.y).to.be(4);
       expect(team1.requests).to.be(30);
     });
 
@@ -597,8 +607,8 @@ describe('game', () => {
       state.teams.push(team1, team2);
 
       const result = engine.spy('team-1', 'Team 2', 1, 3);
-      expect(result.err).to.be(undefined);
-      expect(result.requestsRemaining).to.be(29);
+      expect(result.status).to.be(statuses.ok);
+      expect(result.result.requestsRemaining).to.be(29);
       expect(team1.requests).to.be(29);
 
       expect(state.roleData.redirects['Team 2'].remaining).to.be(15);
@@ -620,12 +630,12 @@ describe('game', () => {
       state.teams.push(team1, team2);
 
       const result1 = engine.spy('team-1', 'Team 2', 1, 1);
-      expect(result1.err).to.be(undefined);
-      expect(result1.requestsRemaining).to.be(29);
+      expect(result1.status).to.be(statuses.ok);
+      expect(result1.result.requestsRemaining).to.be(29);
       expect(team1.requests).to.be(29);
 
       for (let i = 0; i < 14; i++) {
-        expect(engine.attack('team-2', 5, 5).err).to.be(undefined);
+        expect(engine.attack('team-2', 5, 5).status).to.be(statuses.ok);
       }
 
       expect(team2.requests).to.be(16);
@@ -633,14 +643,14 @@ describe('game', () => {
       expect(state.grid.cells[1][1].health).to.be(46);
       expect(state.roleData.redirects['Team 2'].remaining).to.be(1);
 
-      expect(engine.attack('team-2', 5, 5).err).to.be(undefined);
+      expect(engine.attack('team-2', 5, 5).status).to.be(statuses.ok);
 
       expect(team2.requests).to.be(15);
       expect(state.grid.cells[5][5].health).to.be(60);
       expect(state.grid.cells[1][1].health).to.be(45);
       expect(state.roleData.redirects['Team 2'].remaining).to.be(0);
 
-      expect(engine.attack('team-2', 5, 5).err).to.be(undefined);
+      expect(engine.attack('team-2', 5, 5).status).to.be(statuses.ok);
 
       expect(team2.requests).to.be(14);
       expect(state.grid.cells[5][5].health).to.be(59);
@@ -657,12 +667,12 @@ describe('game', () => {
       state.teams.push(team1, team2);
 
       const result1 = engine.spy('team-1', 'Team 2', 1, 1);
-      expect(result1.err).to.be(undefined);
-      expect(result1.requestsRemaining).to.be(29);
+      expect(result1.status).to.be(statuses.ok);
+      expect(result1.result.requestsRemaining).to.be(29);
       expect(team1.requests).to.be(29);
 
       for (let i = 0; i < 7; i++) {
-        expect(engine.attack('team-2', 5, 5).err).to.be(undefined);
+        expect(engine.attack('team-2', 5, 5).status).to.be(statuses.ok);
       }
 
       expect(team2.requests).to.be(23);
@@ -671,7 +681,7 @@ describe('game', () => {
       expect(state.roleData.redirects['Team 2'].remaining).to.be(8);
 
       for (let j = 0; j < 8; j++) {
-        expect(engine.defend('team-2', 5, 5).err).to.be(undefined);
+        expect(engine.defend('team-2', 5, 5).status).to.be(statuses.ok);
       }
 
       expect(team2.requests).to.be(15);
