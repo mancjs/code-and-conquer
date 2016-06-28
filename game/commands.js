@@ -3,6 +3,16 @@
 const statuses = require('./statuses');
 const engine = require('./engine');
 
+const verifyProtocol = (team, args, argCount) => {
+  if (!team) {
+    return statuses.protocolMissingTeam;
+  }
+
+  if (!args || args.length !== argCount) {
+    return statuses.protocolMissingArgs;
+  }
+};
+
 const verifySingleCellRequest = request => {
   if (!request.team) {
     return statuses.missingTeamKey;
@@ -70,6 +80,12 @@ const verifySpyRequest = request => {
 };
 
 const attack = (team, args) => {
+  const protocolError = verifyProtocol(team, args, 1);
+
+  if (protocolError) {
+    return { status: protocolError };
+  }
+
   const request = {
     team: team,
     x: args[0].split(',')[0],
@@ -86,6 +102,12 @@ const attack = (team, args) => {
 };
 
 const defend = (team, args) => {
+  const protocolError = verifyProtocol(team, args, 1);
+
+  if (protocolError) {
+    return { status: protocolError };
+  }
+
   const request = {
     team: team,
     x: args[0].split(',')[0],
@@ -106,6 +128,12 @@ const query = () => {
 };
 
 const mine = (team, args) => {
+  const protocolError = verifyProtocol(team, args, 1);
+
+  if (protocolError) {
+    return { status: protocolError };
+  }
+
   const request = {
     team: team,
     x: args[0].split(',')[0],
@@ -122,6 +150,12 @@ const mine = (team, args) => {
 }; 
 
 const cloak = (team, args) => {
+  const protocolError = verifyProtocol(team, args, 3);
+
+  if (protocolError) {
+    return { status: protocolError };
+  }
+
   const request = {
     team: team,
     cells: args.map(arg => {
@@ -142,6 +176,12 @@ const cloak = (team, args) => {
 };
 
 const spy = (team, args) => {
+  const protocolError = verifyProtocol(team, args, 2);
+
+  if (protocolError) {
+    return { status: protocolError };
+  }
+
   const request = {
     team: team,
     target: args[0],

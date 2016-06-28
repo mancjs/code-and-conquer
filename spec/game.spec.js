@@ -395,7 +395,7 @@ describe('game', () => {
       expect(team1.mineSetAt).to.be('2,2');
 
       const result2 = engine.defend('team-2', 2, 2);
-      expect(result2.status).to.be(statuses.infoMineTriggered);
+      expect(result2.status).to.be(statuses.okMineTriggered);
       expect(result2.result.requestsRemaining).to.be(0);
       expect(result2.result.owner).to.be('Team 1');
       expect(state.grid.cells[2][2].health).to.be(60);
@@ -427,7 +427,7 @@ describe('game', () => {
       expect(team1.requests).to.be(29);
 
       const result2 = engine.mine('team-2', 5, 5);
-      expect(result2.status).to.be(statuses.infoMineTriggered);
+      expect(result2.status).to.be(statuses.okMineTriggered);
       expect(result2.result.requestsRemaining).to.be(0);
       expect(result2.result.owner).to.be('Team 1');
       expect(state.grid.cells[5][5].health).to.be(60);

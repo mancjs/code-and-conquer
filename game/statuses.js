@@ -1,6 +1,8 @@
 module.exports = {
   ok: 'ok',
-  infoMineTriggered: 'info.mine_triggered',
+  okMineTriggered: 'ok.mine_triggered',
+  protocolMissingTeam: 'err.proto_missing_team',
+  protocolMissingArgs: 'err.proto_missing_args',
   gameNotStarted: 'err.game_not_started',
   noRequestsLeft: 'err.no_requests_left',
   missingCommand: 'err.missing_command',

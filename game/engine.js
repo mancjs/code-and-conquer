@@ -116,7 +116,7 @@ const attack = (key, x, y) => {
     team.useAllRequests(key);
 
     return {
-      status: statuses.infoMineTriggered,
+      status: statuses.okMineTriggered,
       result: {
         requestsRemaining: team.getRequestsRemaining(key),
         owner: mineResult.owner
@@ -175,7 +175,7 @@ const defend = (key, x, y) => {
     team.useAllRequests(key);
 
     return {
-      status: statuses.infoMineTriggered,
+      status: statuses.okMineTriggered,
       result: {
         requestsRemaining: team.getRequestsRemaining(key),
         owner: mineResult.owner
@@ -261,7 +261,7 @@ const mine = (key, x, y) => {
     team.useAllRequests(key);
 
     return {
-      status: statuses.infoMineTriggered,
+      status: statuses.okMineTriggered,
       result: {
         requestsRemaining: team.getRequestsRemaining(key),
         owner: mineResult.owner
