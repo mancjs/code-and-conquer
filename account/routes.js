@@ -65,140 +65,14 @@ var overviewData = function(request, response) {
 
 var getOverviewData = function() {
   var refreshSeconds = requests.getSecondsUntilNextRefresh({});
-  var gameData = engine.query();
+  var response = engine.query();
 
   return {
-    grid: gameData.grid,
-    gameStarted: gameData.gameStarted,
+    grid: response.result.grid,
+    gameStarted: response.result.gameStarted,
     refreshSeconds: (refreshSeconds < 10) ? ('0' + refreshSeconds) : refreshSeconds
   };
 };
-
-// var verifySingleCellRequest = function(request) {
-//   if (!request.body) {
-//     return { err: 'no data sent to request' };
-//   }
-
-//   if (!request.body.key) {
-//     return { err: 'no key specified' };
-//   }
-
-//   if (request.body.x === undefined) {
-//     return { err: 'no x grid coordinate specified' };
-//   }
-
-//   if (request.body.y === undefined) {
-//     return { err: 'no y grid coordinate specified' };
-//   }
-// };
-
-// var verifyMultipleCellRequest = function(request) {
-//   if (!request.body) {
-//     return { err: 'no data sent to request' };
-//   }
-
-//   if (!request.body.key) {
-//     return { err: 'no key specified' };
-//   }
-
-//   if (!request.body.cells || !request.body.cells.length) {
-//     return { err: 'no cells specified' };
-//   }
-
-//   for (var i = 0; i < request.body.cells.length; i++) {
-//     var cell = request.body.cells[i];
-
-//     if (!cell || cell.x === undefined) {
-//       return { err: 'each cell must contain numeric x and y coords' };
-//     }
-
-//     if (!cell || cell.y === undefined) {
-//       return { err: 'each cell must contain numeric x and y coords' };
-//     }
-//   }
-// };
-
-// var verifySpyRequest = function(request) {
-//   if (!request.body) {
-//     return { err: 'no data sent to request' };
-//   }
-
-//   if (!request.body.key) {
-//     return { err: 'no key specified' };
-//   }
-
-//   if (!request.body.teamName) {
-//     return { err: 'no teamName specified' };
-//   }
-
-//   if (request.body.x === undefined) {
-//     return { err: 'no x grid coordinate specified' };
-//   }
-
-//   if (request.body.y === undefined) {
-//     return { err: 'no y grid coordinate specified' };
-//   }
-// };
-
-// var attack = function(request, response) {
-//   var verificationError = verifySingleCellRequest(request);
-
-//   if (verificationError) {
-//     return response(types.json(verificationError));
-//   }
-
-//   var result = engine.attack(request.body.key, request.body.x, request.body.y);
-//   return response(types.json(result));
-// };
-
-// var defend = function(request, response) {
-//   var verificationError = verifySingleCellRequest(request);
-
-//   if (verificationError) {
-//     return response(types.json(verificationError));
-//   }
-
-//   var result = engine.defend(request.body.key, request.body.x, request.body.y);
-//   return response(types.json(result));
-// };
-
-// var query = function(request, response) {
-//   var result = engine.query();
-//   return response(types.json(result));
-// };
-
-// var mine = function(request, response) {
-//   var verificationError = verifySingleCellRequest(request);
-
-//   if (verificationError) {
-//     return response(types.json(verificationError));
-//   }
-
-//   var result = engine.layMine(request.body.key, request.body.x, request.body.y);
-//   return response(types.json(result));
-// };
-
-// var cloak = function(request, response) {
-//   var verificationError = verifyMultipleCellRequest(request);
-
-//   if (verificationError) {
-//     return response(types.json(verificationError));
-//   }
-
-//   var result = engine.cloak(request.body.key, request.body.cells);
-//   return response(types.json(result));
-// };
-
-// var spy = function(request, response) {
-//   var verificationError = verifySpyRequest(request);
-
-//   if (verificationError) {
-//     return response(types.json(verificationError));
-//   }
-
-//   var result = engine.spy(request.body.key, request.body.teamName, request.body.x, request.body.y);
-//   return response(types.json(result));
-// };
 
 module.exports = {
   'GET /': root,
@@ -210,12 +84,4 @@ module.exports = {
 
   'GET /overview': overview,
   'GET /api/overview-data': overviewData
-
-  // 'POST /game/attack': attack,
-  // 'POST /game/defend': defend,
-  // 'GET /game/query': query,
-
-  // 'POST /game/role/mine': mine,
-  // 'POST /game/role/cloak': cloak,
-  // 'POST /game/role/spy': spy
 };
