@@ -47,7 +47,7 @@ const buildRequestObject = (req, callback) => {
     return callback(requestData);
   }
 
-  const jsonString = '';
+  let jsonString = '';
 
   req.on('data', data => {
     jsonString += data;

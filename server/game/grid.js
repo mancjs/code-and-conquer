@@ -4,10 +4,10 @@ const config = require('../../config');
 
 let generated = {};
 
-var generateRandomCoords = function(width, height, count) {
-  var coords = [];
+const generateRandomCoords = (width, height, count) => {
+  let coords = [];
 
-  for (var i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     let generating = true;
 
     while (generating) {
@@ -29,18 +29,18 @@ var generateRandomCoords = function(width, height, count) {
   return { coords };
 };
 
-var applyBonusSquares = function(cells, coords, bonus) {
-  coords.forEach(function(coord) {
+const applyBonusSquares = (cells, coords, bonus) => {
+  coords.forEach(coord => {
     cells[coord.y][coord.x].bonus = bonus;
   });
 };
 
-var generate = function(width, height) {
+const generate = (width, height) => {
   generated = {};
 
-  var cells = [];
+  let cells = [];
 
-  var preownedState = function() {
+  const preownedState = () => {
     return {
       bonus: 1,
       health: config.game.health.cpu,
@@ -48,16 +48,19 @@ var generate = function(width, height) {
         attacks: {},
         defends: {}
       },
-      owner: { name: 'cpu', colour: '#333333' }
+      owner: { 
+        name: 'cpu', 
+        colour: '#333333' 
+      }
     };
   };
 
-  for (var y = 0; y < height; y++) {
+  for (let y = 0; y < height; y++) {
     if (!cells[y]) {
       cells[y] = [];
     }
 
-    for (var x = 0; x < width; x++) {
+    for (let x = 0; x < width; x++) {
       cells[y].push(preownedState());
     }
   }
@@ -67,37 +70,40 @@ var generate = function(width, height) {
   const x2Count = Math.ceil(width * height * x2);
   const x3Count = Math.ceil(width * height * x3); 
 
-  var double = generateRandomCoords(width, height, x2Count);
+  const double = generateRandomCoords(width, height, x2Count);
   applyBonusSquares(cells, double.coords, 2);
 
-  var triple = generateRandomCoords(width, height, x3Count);
+  const triple = generateRandomCoords(width, height, x3Count);
   applyBonusSquares(cells, triple.coords, 3);
 
   return {
-    cells: cells,
-    width: width,
-    height: height,
+    cells,
+    width,
+    height,
     doubleSquares: x2Count,
     tripleSquares: x3Count
   };
 };
 
-var getCell = function(grid, x, y) {
-  var cells = grid.cells;
+const getCell = (grid, x, y) => {
+  const cells = grid.cells;
 
   try {
-    if (cells[y][x]) return cells[y][x];
+    if (cells[y][x]) {
+      return cells[y][x];
+    }
   } catch (err) {}
 };
 
-var setCellOwner = function(cell, ownerData) {
+const setCellOwner = (cell, ownerData) => {
   cell.owner = ownerData;
-  cell.health = 120;
+  cell.health = config.game.health.player;
   cell.history = { attacks: {}, defends: {} };
+
   delete cell.lastAttack;
 };
 
-var addCellAttackHistory = function(cell, name, colour) {
+const addCellAttackHistory = (cell, name, colour) => {
   if (cell.history.attacks[name] === undefined) {
     cell.history.attacks[name] = 0;
   }
@@ -106,14 +112,11 @@ var addCellAttackHistory = function(cell, name, colour) {
 
   cell.lastAttack = {
     time: new Date().getTime(),
-    team: {
-      name: name,
-      colour: colour
-    }
+    team: { name, colour }
   };
 };
 
-var addCellDefendHistory = function(cell, name) {
+const addCellDefendHistory = (cell, name) => {
   if (cell.history.defends[name] === undefined) {
     cell.history.defends[name] = 0;
   }
@@ -122,9 +125,9 @@ var addCellDefendHistory = function(cell, name) {
 };
 
 module.exports = {
-  generate: generate,
-  getCell: getCell,
-  setCellOwner: setCellOwner,
-  addCellAttackHistory: addCellAttackHistory,
-  addCellDefendHistory: addCellDefendHistory
+  generate,
+  getCell,
+  setCellOwner,
+  addCellAttackHistory,
+  addCellDefendHistory
 };

@@ -2,6 +2,7 @@
 
 const fs = require('graceful-fs');
 const path = require('path');
+
 const types = require('./types');
 
 const supportedTypes = {

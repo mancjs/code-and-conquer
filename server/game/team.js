@@ -1,46 +1,47 @@
-var db = require('../../lib/db');
+'use strict';
 
 const config = require('../../config');
+const db = require('../../lib/db');
 
-var getByKey = function(key) {
-  return db.get().teams.filter(function(team) {
+const getByKey = key => {
+  return db.get().teams.filter(team => {
     return team.key === key;
   })[0];
 };
 
-var existsByName = function(name) {
-  var team = db.get().teams.filter(function(team) {
+const existsByName = name => {
+  const team = db.get().teams.filter(team => {
     return team.name === name;
   })[0];
 
   return !!team;
 };
 
-var hasRequests = function(key) {
-  var team = getByKey(key);
+const hasRequests = key => {
+  const team = getByKey(key);
   return team && team.requests > 0;
 };
 
-var useRequest = function(key) {
+const useRequest = key => {
   getByKey(key).requests -= 1;
 };
 
-var useAllRequests = function(key) {
+const useAllRequests = key => {
   getByKey(key).requests = 0;
 };
 
-var resetRequests = function() {
-  db.get().teams.forEach(function(team) {
+const resetRequests = () => {
+  db.get().teams.forEach(team => {
     team.requests = config.game.requests.amount;
   });
 };
 
-var getRequestsRemaining = function(key) {
+const getRequestsRemaining = key => {
   return getByKey(key).requests;
 };
 
-var getPublicData = function(key) {
-  var team = getByKey(key);
+const getPublicData = key => {
+  const team = getByKey(key);
 
   return {
     name: team.name,
@@ -49,11 +50,11 @@ var getPublicData = function(key) {
 };
 
 module.exports = {
-  existsByName: existsByName,
-  hasRequests: hasRequests,
-  useRequest: useRequest,
-  useAllRequests: useAllRequests,
-  resetRequests: resetRequests,
-  getRequestsRemaining: getRequestsRemaining,
-  getPublicData: getPublicData
+  existsByName,
+  hasRequests,
+  useRequest,
+  useAllRequests,
+  resetRequests,
+  getRequestsRemaining,
+  getPublicData
 };

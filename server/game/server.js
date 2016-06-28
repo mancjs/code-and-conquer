@@ -1,8 +1,11 @@
+'use strict';
+
 const net = require('net');
-const log = require('../../lib/log');
+
 const commands = require('./commands');
-const statuses = require('./statuses');
 const config = require('../../config');
+const log = require('../../lib/log');
+const statuses = require('./statuses');
 
 const startServer = () => {
   const parseRequest = data => {

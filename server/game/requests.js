@@ -1,16 +1,17 @@
-var team = require('./team');
-var log = require('../../lib/log');
+'use strict';
 
 const config = require('../../config');
+const log = require('../../lib/log');
+const team = require('./team');
 
-var interval;
-var lastRefresh;
+let interval;
+let lastRefresh;
 
-var startRefreshTimer = function(refreshRateSecs) {
+const startRefreshTimer = refreshRateSecs => {
   team.resetRequests();
   lastRefresh = new Date;
 
-  var refresh = function() {
+  const refresh = () => {
     if (new Date - lastRefresh >= (refreshRateSecs || config.game.requests.refresh) * 1000) {
       team.resetRequests();
       lastRefresh = new Date;
@@ -23,20 +24,20 @@ var startRefreshTimer = function(refreshRateSecs) {
   log('requests', 'refresh timer started');
 };
 
-var stopRefreshTimer = function() {
+const stopRefreshTimer = () => {
   clearInterval(interval);
 };
 
-var getSecondsUntilNextRefresh = function(args) {
-  var refreshRateSecs = args.refreshRateSecs || config.game.requests.refresh;
-  var currentTime = args.currentTime || new Date;
-  var lastRefreshTime = args.lastRefresh || lastRefresh;
+const getSecondsUntilNextRefresh = args => {
+  const refreshRateSecs = args.refreshRateSecs || config.game.requests.refresh;
+  const currentTime = args.currentTime || new Date;
+  const lastRefreshTime = args.lastRefresh || lastRefresh;
 
   return Math.round(refreshRateSecs - ((currentTime - lastRefreshTime) / 1000));
 };
 
 module.exports = {
-  startRefreshTimer: startRefreshTimer,
-  stopRefreshTimer: stopRefreshTimer,
-  getSecondsUntilNextRefresh: getSecondsUntilNextRefresh
+  startRefreshTimer,
+  stopRefreshTimer,
+  getSecondsUntilNextRefresh
 };

@@ -1,12 +1,14 @@
+'use strict';
+
+const clone = require('../../lib/clone');
+const config = require('../../config');
 const db = require('../../lib/db');
 const grid = require('./grid');
 const log = require('../../lib/log');
-const team = require('./team');
-const roles = require('./roles');
-const clone = require('../../lib/clone');
 const requests = require('./requests');
+const roles = require('./roles');
 const statuses = require('./statuses');
-const config = require('../../config');
+const team = require('./team');
 
 const verifyTeam = (key) => {
   if (!db.get().gameStarted) {

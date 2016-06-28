@@ -1,57 +1,60 @@
-var db = require('../../lib/db');
-var log = require('../../lib/log');
+'use strict';
 
-var test = {
+const config = require('../../config');
+const db = require('../../lib/db');
+const log = require('../../lib/log');
+
+let test = {
   timeOverride: null
 };
 
-var getTeamByKey = function(key) {
-  return db.get().teams.filter(function(team) {
+const getTeamByKey = key => {
+  return db.get().teams.filter(team => {
     return team.key === key;
   })[0];
 };
 
-var getTeamByName = function(name) {
-  return db.get().teams.filter(function(team) {
+const getTeamByName = name => {
+  return db.get().teams.filter(team => {
     return team.name === name;
   })[0];
 };
 
-var verify = function(key, role) {
+const verify = (key, role) => {
   return getTeamByKey(key).role === role;
 };
 
-var useRole = function(key) {
+const useRole = key => {
   getTeamByKey(key).roleUsed = true;
 };
 
-var roleUsed = function(key) {
+const roleUsed = key => {
   return getTeamByKey(key).roleUsed;
 };
 
-var setMine = function(key, x, y) {
-  var state = db.get();
-  var team = getTeamByKey(key);
+const setMine = (key, x, y) => {
+  const state = db.get();
+  const team = getTeamByKey(key);
 
-  state.roleData.mines[x + ',' + y] = { triggered: false, owner: team.name };
-  team.mineSetAt = x + ',' + y;
+  state.roleData.mines[`${x},${y}`] = { triggered: false, owner: team.name };
+  team.mineSetAt = `${x},${y}`;
 
-  log('roles', team.name + ' set mine at ' + x + ',' + y);
+  log('roles', `${team.name} set mine at ${x},${y}`);
 };
 
-var checkMineTrigger = function(key, x, y) {
-  var state = db.get();
+const checkMineTrigger = (key, x, y) => {
+  const state = db.get();
 
-  var mineData = state.roleData.mines[x + ',' + y];
+  const mineData = state.roleData.mines[`${x},${y}`];
 
   if (mineData && !mineData.triggered) {
     mineData.triggered = true;
     mineData.triggeredBy = getTeamByKey(key).name;
 
-    var owner = getTeamByName(mineData.owner);
+    const owner = getTeamByName(mineData.owner);
     owner.mineTriggeredBy = mineData.triggeredBy;
 
-    log('roles', mineData.owner + '\'s mine triggered by ' + mineData.triggeredBy);
+    log('roles', `${mineData.owner}'s mine triggered by ${mineData.triggeredBy}`);
 
     return {
       triggered: true,
@@ -64,29 +67,29 @@ var checkMineTrigger = function(key, x, y) {
   };
 };
 
-var setCloak = function(key, cells) {
+const setCloak = (key, cells) => {
   if (!cells.length) {
     return;
   }
 
-  var getTimestamp = function() {
-    var time = new Date;
+  const getTimestamp = () => {
+    const time = new Date;
 
-    return [time.getHours(), time.getMinutes(), time.getSeconds()].map(function(part) {
-      return part < 10 ? '0' + part : part;
+    return [time.getHours(), time.getMinutes(), time.getSeconds()].map(part => {
+      return part < 10 ? `0${part}` : part;
     }).join(':');
   };
 
-  var state = db.get();
-  var team = getTeamByKey(key);
+  const state = db.get();
+  const team = getTeamByKey(key);
 
   team.cloakTime = getTimestamp();
 
-  team.cloakedCells = cells.map(function(cell) {
-    return cell.x + ',' + cell.y;
+  team.cloakedCells = cells.map(cell => {
+    return `${cell.x},${cell.y}`;
   }).join(' ');
 
-  cells.forEach(function(cell) {
+  cells.forEach(cell => {
     state.roleData.cloaks.push({
       cloakTime: new Date().getTime(),
       owner: team.name,
@@ -95,50 +98,50 @@ var setCloak = function(key, cells) {
     });
   });
 
-  log('roles', team.name + ' deployed cloak');
+  log('roles', `${team.name} deployed cloak`);
 };
 
-var updateGridWithCloaks = function(grid) {
-  var state = db.get();
+const updateGridWithCloaks = grid => {
+  const state = db.get();
 
-  var cloakValidityMs = 5 * 60 * 1000;
+  const cloakValidityMs = config.game.roles.cloak.minutes * 60 * 1000;
 
-  state.roleData.cloaks.filter(function(cloak) {
-    var age = (test.timeOverride || new Date().getTime()) - cloak.cloakTime;
+  state.roleData.cloaks.filter(cloak => {
+    const age = (test.timeOverride || new Date().getTime()) - cloak.cloakTime;
     return age <= cloakValidityMs;
-  }).forEach(function(cloak) {
-    grid.cells[cloak.y][cloak.x].health = 120;
+  }).forEach(cloak => {
+    grid.cells[cloak.y][cloak.x].health = config.game.health.player;
     grid.cells[cloak.y][cloak.x].history = { attacks: {}, defends: {} };
   });
 };
 
-var setSpy = function(key, teamName, x, y) {
-  var state = db.get();
-  var team = getTeamByKey(key);
+const setSpy = (key, teamName, x, y) => {
+  const state = db.get();
+  const team = getTeamByKey(key);
 
   team.redirectedTeam = getTeamByName(teamName).name;
-  team.redirectedTo = x + ',' + y;
+  team.redirectedTo = `${x},${y}`;
 
   state.roleData.redirects[teamName] = {
-    remaining: 15,
+    remaining: config.game.roles.spy.redirects,
     owner: team.name,
-    x: x,
-    y: y
+    x,
+    y
   };
 
-  log('roles', team.name + ' set redirect on ' + team.redirectedTeam + ' to ' + x + ',' + y);
+  log('roles', `${team.name} set redirect on ${team.redirectedTeam} to ${x},${y}`);
 };
 
-var isTeamRedirected = function(key) {
-  var state = db.get();
-  var team = getTeamByKey(key);
+const isTeamRedirected = key => {
+  const state = db.get();
+  const team = getTeamByKey(key);
 
-  var redirect = state.roleData.redirects[team.name];
+  let redirect = state.roleData.redirects[team.name];
 
   if (redirect && redirect.remaining > 0) {
     redirect.remaining -= 1;
 
-    log('roles', team.name + '\'s request redirected to ' + redirect.x + ',' + redirect.y);
+    log('roles', `${team.name}'s request redirected to ${redirect.x},${redirect.y}`);
 
     return {
       x: redirect.x,
@@ -149,22 +152,20 @@ var isTeamRedirected = function(key) {
   return false;
 };
 
-var setCurrentTime = function(time) {
+const setCurrentTime = time => {
   test.timeOverride = time;
 };
 
 module.exports = {
-  getTeamByName: getTeamByName,
-  verify: verify,
-  useRole: useRole,
-  roleUsed: roleUsed,
-  setMine: setMine,
-  checkMineTrigger: checkMineTrigger,
-  setCloak: setCloak,
-  updateGridWithCloaks: updateGridWithCloaks,
-  setSpy: setSpy,
-  isTeamRedirected: isTeamRedirected,
-  test: {
-    setCurrentTime: setCurrentTime
-  }
+  getTeamByName,
+  verify,
+  useRole,
+  roleUsed,
+  setMine,
+  checkMineTrigger,
+  setCloak,
+  updateGridWithCloaks,
+  setSpy,
+  isTeamRedirected,
+  test: { setCurrentTime }
 };

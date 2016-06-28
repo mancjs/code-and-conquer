@@ -1,9 +1,9 @@
 'use strict';
 
+const config = require('../../config');
 const engine = require('../game/engine');
 const registration = require('./registration');
 const requests = require('../game/requests');
-const config = require('../../config');
 const types = require('./types');
 
 const root = (request, response) => {
@@ -54,7 +54,7 @@ const accountData = (request, response) => {
   return response(types.json({
     teams: teams,
     requests: team.requests,
-    grid: engine.query().grid
+    grid: engine.query().result.grid
   }));
 };
 

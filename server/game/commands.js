@@ -1,7 +1,7 @@
 'use strict';
 
-const statuses = require('./statuses');
 const engine = require('./engine');
+const statuses = require('./statuses');
 
 const verifyProtocol = (team, args, argCount) => {
   if (!team) {
@@ -9,7 +9,7 @@ const verifyProtocol = (team, args, argCount) => {
   }
 
   if (!args || args.length !== argCount) {
-    return statuses.protocolMissingArgs;
+    return statuses.protocolBadArgs;
   }
 };
 

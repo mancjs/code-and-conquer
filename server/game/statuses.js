@@ -1,8 +1,10 @@
+'use strict';
+
 module.exports = {
   ok: 'ok',
   okMineTriggered: 'ok.mine_triggered',
   protocolMissingTeam: 'err.proto_missing_team',
-  protocolMissingArgs: 'err.proto_missing_args',
+  protocolBadArgs: 'err.proto_bad_args',
   gameNotStarted: 'err.game_not_started',
   noRequestsLeft: 'err.no_requests_left',
   missingCommand: 'err.missing_command',

@@ -1,6 +1,7 @@
 'use strict';
 
 const net = require('net');
+
 const commands = require('./commands');
 const config = require('../../config');
 const log = require('../../lib/log');
