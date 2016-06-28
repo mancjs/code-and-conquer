@@ -1,4 +1,7 @@
+'use strict';
+
 const fs = require('graceful-fs');
+
 const tmpl = require('../../lib/tmpl');
 
 const templates = {

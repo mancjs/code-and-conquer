@@ -1,8 +1,11 @@
+'use strict';
+
 const crypto = require('crypto');
-const db = require('../../lib/db');
-const log = require('../../lib/log');
+
 const colours = require('../../lib/colours');
 const config = require('../../config');
+const db = require('../../lib/db');
+const log = require('../../lib/log');
 
 const roles = ['minelayer', 'cloaker', 'spy'];
 

@@ -1,8 +1,11 @@
-const querystring = require('querystring');
+'use strict';
+
 const http = require('http');
+const querystring = require('querystring');
+
+const config = require('../../config');
 const ddos = require('./ddos');
 const log = require('../../lib/log');
-const config = require('../../config');
 const routes = require('./routes');
 const staticFileHandler = require('./file-handler');
 

@@ -1,8 +1,10 @@
-const types = require('./types');
-const  engine = require('../game/engine');
-const  requests = require('../game/requests');
-const  registration = require('./registration');
+'use strict';
+
+const engine = require('../game/engine');
+const registration = require('./registration');
+const requests = require('../game/requests');
 const config = require('../../config');
+const types = require('./types');
 
 const root = (request, response) => {
   return response(types.redirect('/register'));
