@@ -1,39 +1,38 @@
-var types = require('./types');
-var engine = require('../game/engine');
-var requests = require('../game/requests');
-var registration = require('./registration');
-
+const types = require('./types');
+const  engine = require('../game/engine');
+const  requests = require('../game/requests');
+const  registration = require('./registration');
 const config = require('../../config');
 
-var root = function(request, response) {
+const root = (request, response) => {
   return response(types.redirect('/register'));
 };
 
-var register = function(request, response) {
+const register = (request, response) => {
   return response(types.template('register.html'));
 };
 
-var registerTeam = function(request, response) {
-  var team = request.body;
-  var status = registration.createTeam(team.name, team.email, team.role);
+const registerTeam = (request, response) => {
+  const team = request.body;
+  const status = registration.createTeam(team.name, team.email, team.role);
 
   if (status.err) {
     return response(types.json({ err: status.err }));
   }
 
-  var url = '/account?key=' + status.team.key;
+  const url = `/account?key=${status.team.key}`;
 
   return response(types.json({ url: url }));
 };
 
-var account = function(request, response) {
-  var team = registration.getTeamByKey(request.query.key);
+const account = (request, response) => {
+  const team = registration.getTeamByKey(request.query.key);
 
   if (!team) {
     return response(types.redirect('/'));
   }
 
-  var model = {
+  const model = {
     team: team,
     gameStatus: engine.getStatus()
   };
@@ -41,14 +40,14 @@ var account = function(request, response) {
   return response(types.template('account.html', model));
 };
 
-var accountData = function(request, response) {
-  var team = registration.getTeamByKey(request.query.key);
+const accountData = (request, response) => {
+  const team = registration.getTeamByKey(request.query.key);
 
   if (!team) {
     return response(types.redirect('/'));
   }
 
-  var teams = registration.getTeamNames();
+  const teams = registration.getTeamNames();
 
   return response(types.json({
     teams: teams,
@@ -57,17 +56,17 @@ var accountData = function(request, response) {
   }));
 };
 
-var overview = function(request, response) {
+const overview = (request, response) => {
   return response(types.template('overview.html', getOverviewData()));
 };
 
-var overviewData = function(request, response) {
+const overviewData = (request, response) => {
   return response(types.json(getOverviewData()));
 };
 
-var getOverviewData = function() {
-  var refreshSeconds = requests.getSecondsUntilNextRefresh({});
-  var response = engine.query();
+const getOverviewData = () => {
+  const refreshSeconds = requests.getSecondsUntilNextRefresh({});
+  const response = engine.query();
 
   return {
     grid: response.result.grid,
