@@ -1,14 +1,16 @@
-var db = require('../../lib/db');
-var ddos = require('../account/ddos');
-var engine = require('../game/engine');
-var registration = require('../account/registration');
+'use strict';
 
-var initGame = function(args) {
+const db = require('../../lib/db');
+const ddos = require('../account/ddos');
+const engine = require('../game/engine');
+const registration = require('../account/registration');
+
+const initGame = args => {
   if (!args || args.indexOf('x') === -1) {
     return 'missing grid size (e.g. 10x10)';
   }
 
-  var gridSize = {
+  const gridSize = {
     width: parseInt(args.split('x')[0].trim()),
     height: parseInt(args.split('x')[1].trim())
   };
@@ -18,8 +20,8 @@ var initGame = function(args) {
   return getStatus();
 };
 
-var startGame = function() {
-  var state = db.get();
+const startGame = () => {
+  const state = db.get();
 
   if (!state.grid) {
     return 'no game initialised';
@@ -31,8 +33,8 @@ var startGame = function() {
   return getStatus();
 };
 
-var stopGame = function() {
-  var state = db.get();
+const stopGame = () => {
+  const state = db.get();
 
   if (!state.grid) {
     return 'no game initialised';
@@ -44,24 +46,24 @@ var stopGame = function() {
   return getStatus();
 };
 
-var openRegistration = function() {
+const openRegistration = () => {
   registration.open();
   return getStatus();
 };
 
-var closeRegistration = function() {
+const closeRegistration = () => {
   registration.close();
   return getStatus();
 };
 
-var getTeams = function() {
-  var teams = registration.getAllTeams();
+const getTeams = () => {
+  const teams = registration.getAllTeams();
 
-  var lines = teams.map(function(team) {
+  const lines = teams.map(team => {
     return team.key + ': ' + team.name + ' [' + team.role + '] [' + team.requests + ']';
   }).join('\n');
 
-  var response = teams.length + ' total';
+  let response = `${teams.length} total`;
 
   if (teams.length) {
     response += '\n' + lines;
@@ -70,7 +72,7 @@ var getTeams = function() {
   return response;
 };
 
-var deleteTeam = function(args) {
+const deleteTeam = args => {
   if (!args) {
     return 'missing team key';
   }
@@ -78,48 +80,48 @@ var deleteTeam = function(args) {
   return registration.deleteTeam(args);
 };
 
-var getStatus = function() {
-  var registrationStatus = registration.getStatus();
-  var gameStatus = engine.getStatus();
+const getStatus = () => {
+  const registrationStatus = registration.getStatus();
+  const gameStatus = engine.getStatus();
 
   if (!gameStatus) {
     return 'init game first';
   }
 
-  var values = [
-    'ddos: ' + (ddos.isEnabled() ? 'on' : 'off'),
-    'teams: ' + registrationStatus.teamCount,
-    'registration: ' + (registrationStatus.open ? 'open' : 'closed'),
-    'game: ' + (gameStatus.started ? 'started' : 'stopped'),
-    'grid: ' + gameStatus.width + 'x' + gameStatus.height,
-    'x2: ' + gameStatus.doubleSquares,
-    'x3: ' + gameStatus.tripleSquares
+  const values = [
+    `ddos: ${ddos.isEnabled() ? 'on' : 'off' }`,
+    `teams: ${registrationStatus.teamCount}`,
+    `registration: ${registrationStatus.open ? 'open' : 'closed' }`,
+    `game: ${gameStatus.started ? 'started' : 'stopped' }`,
+    `grid: ${gameStatus.width}x${gameStatus.height}`,
+    `x2: ${gameStatus.doubleSquares}`,
+    `x3: ${gameStatus.tripleSquares}`
   ];
 
   return values.join('\n');
 };
 
-var simulate = function() {
+const simulate = () => {
   db.init();
   engine.init({ width: 8, height: 8 });
   registration.open();
 
-  var result1 = registration.createTeam('Team 1', 'a@b.c1', 'minelayer');
-  var result2 = registration.createTeam('Team 2', 'a@b.c2', 'minelayer');
-  var result3 = registration.createTeam('Team 3', 'a@b.c3', 'spy');
-  var result4 = registration.createTeam('Team 4', 'a@b.c4', 'spy');
-  var result5 = registration.createTeam('Team 5', 'a@b.c5', 'cloaker');
-  var result6 = registration.createTeam('Team 6', 'a@b.c6', 'cloaker');
+  const result1 = registration.createTeam('Team 1', 'a@b.c1', 'minelayer');
+  const result2 = registration.createTeam('Team 2', 'a@b.c2', 'minelayer');
+  const result3 = registration.createTeam('Team 3', 'a@b.c3', 'spy');
+  const result4 = registration.createTeam('Team 4', 'a@b.c4', 'spy');
+  const result5 = registration.createTeam('Team 5', 'a@b.c5', 'cloaker');
+  const result6 = registration.createTeam('Team 6', 'a@b.c6', 'cloaker');
 
-  var teams = [result1.team, result2.team, result3.team, result4.team, result5.team, result6.team];
+  const teams = [result1.team, result2.team, result3.team, result4.team, result5.team, result6.team];
 
   startGame();
 
-  var state = db.get();
+  const state = db.get();
 
-  for (var i = 0; i < 40; i++) {
-    var x = Math.floor(Math.random() * 8);
-    var y = Math.floor(Math.random() * 8);
+  for (let i = 0; i < 40; i++) {
+    const x = Math.floor(Math.random() * 8);
+    const y = Math.floor(Math.random() * 8);
 
     state.grid.cells[y][x].health = 1;
     engine.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
@@ -132,18 +134,18 @@ var simulate = function() {
   return getStatus();
 };
 
-var getScores = function() {
-  var state = db.get();
+const getScores = () => {
+  const state = db.get();
 
   if (!state.gameStarted) {
     return;
   }
 
-  var teams = {};
+  let teams = {};
 
-  state.grid.cells.forEach(function(row) {
-    row.forEach(function(cell) {
-      var key = cell.owner.name;
+  state.grid.cells.forEach(row => {
+    row.forEach(cell => {
+      const key = cell.owner.name;
 
       if (key === 'cpu') {
         return;
@@ -157,55 +159,55 @@ var getScores = function() {
     });
   });
 
-  teams = Object.keys(teams).map(function(key) {
+  teams = Object.keys(teams).map(key => {
     return teams[key];
   });
 
-  teams.sort(function(left, right) {
+  teams.sort((left, right) => {
     return right.score - left.score;
   });
 
-  var position = 1;
-  var lastScore;
+  let position = 1;
+  let lastScore;
 
-  return teams.map(function(team) {
+  return teams.map(team => {
     if (lastScore && (team.score < lastScore)) {
       position += 1;
     }
 
     lastScore = team.score;
-    return position + ': ' + team.name + ', score: ' + team.score;
+    return `${position}: ${team.name}, score: ${team.score}`;
   }).join('\n');
 };
 
-var ddosEnable = function() {
+const ddosEnable = () => {
   ddos.enable(true);
   return getStatus();
 };
 
-var ddosDisable = function() {
+const ddosDisable = () => {
   ddos.enable(false);
   return getStatus();
 };
 
-var ddosClear = function() {
+const ddosClear = () => {
   ddos.clear();
   return getStatus();
 };
 
-var ddosList = function() {
-  var clients = ddos.getData();
-  var keys = Object.keys(clients);
+const ddosList = () => {
+  const clients = ddos.getData();
+  const keys = Object.keys(clients);
 
-  var response = 'clients: ' + keys.length;
+  let response = `clients: ${keys.length}`;
 
   if (keys.length > 0) {
-    response += '\n' + keys.map(function(address) {
-      var client = clients[address];
-      var timeLeft = 60 - Math.round((new Date().getTime() - client.added) / 1000);
-      var bannedState = (client.banned ? ' | BANNED (' + timeLeft + 's)' : '');
+    response += '\n' + keys.map(address => {
+      const client = clients[address];
+      const timeLeft = 60 - Math.round((new Date().getTime() - client.added) / 1000);
+      const bannedState = (client.banned ? ` | BANNED (${timeLeft}s)` : '');
 
-      return address + ' | requests = ' + client.requests + bannedState;
+      return `${address} | requests = ${client.requests}${bannedState}`;
     }).join('\n');
   }
 

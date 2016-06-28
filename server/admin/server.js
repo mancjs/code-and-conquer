@@ -1,28 +1,29 @@
-var net = require('net');
-var log = require('../../lib/log');
-var commands = require('./commands');
+'use strict';
 
+const net = require('net');
+const commands = require('./commands');
 const config = require('../../config');
+const log = require('../../lib/log');
 
-var startServer = function() {
-  var sendHelp = function(socket) {
-    socket.write('commands: ' + Object.keys(commands).join(', ') + '\n');
+const startServer = () => {
+  const sendHelp = socket => {
+    socket.write(`commands: ${Object.keys(commands).join(', ')}\n`);
     sendPrompt(socket);
   };
 
-  var sendPrompt = function(socket) {
+  const sendPrompt = socket => {
     socket.write('> ');
   };
 
-  var sendWelcome = function(socket) {
+  const sendWelcome = socket => {
     socket.write('\n');
     socket.write('Code & Conquer Admin Server\n');
-    socket.write('Hello ' + socket.remoteAddress + '\n\n');
+    socket.write(`Hello ${socket.remoteAddress}\n\n`);
     sendPrompt(socket);
   };
 
-  var parseCommand = function(data) {
-    var parts = data.trim().split(' ');
+  const parseCommand = data => {
+    const parts = data.trim().split(' ');
 
     return {
       name: parts[0],
@@ -30,13 +31,13 @@ var startServer = function() {
     };
   };
 
-  var server = net.createServer(function(socket) {
-    log('admin', socket.remoteAddress + ' connected');
+  const server = net.createServer(socket => {
+    log('admin', `${socket.remoteAddress} connected`);
 
     sendWelcome(socket);
 
-    socket.on('data', function(data) {
-      var cmd = parseCommand(data.toString());
+    socket.on('data', data => {
+      const cmd = parseCommand(data.toString());
 
       if (cmd.name === 'exit') {
         return socket.end('adiós\n\n');
@@ -46,10 +47,10 @@ var startServer = function() {
         return sendHelp(socket);
       }
 
-      var result = commands[cmd.name](cmd.args);
+      const result = commands[cmd.name](cmd.args);
 
       if (result) {
-        socket.write(result + '\n');
+        socket.write(`${result}\n`);
       }
 
       sendPrompt(socket);
@@ -63,5 +64,5 @@ var startServer = function() {
 };
 
 module.exports = {
-  startServer: startServer
+  startServer
 };
