@@ -1,43 +1,42 @@
-var crypto = require('crypto');
-var db = require('../../lib/db');
-var log = require('../../lib/log');
-var colours = require('../../lib/colours');
-
+const crypto = require('crypto');
+const db = require('../../lib/db');
+const log = require('../../lib/log');
+const colours = require('../../lib/colours');
 const config = require('../../config');
 
-var roles = ['minelayer', 'cloaker', 'spy'];
+const roles = ['minelayer', 'cloaker', 'spy'];
 
-var createKey = function() {
+const createKey = () => {
   return (Math.round(Math.random() * 100000000000)).toString(36);
 };
 
-var getGravatarUrl = function(email) {
-  var hash = crypto.createHash('md5').update(email).digest('hex');
-  return 'http://www.gravatar.com/avatar/' + hash + '?s=130&d=wavatar';
+const getGravatarUrl = email => {
+  const hash = crypto.createHash('md5').update(email).digest('hex');
+  return `http://www.gravatar.com/avatar/${hash}?s=130&d=wavatar`;
 };
 
-var open = function() {
+const open = () => {
   db.get().registrationOpen = true;
   log('registration', 'open');
 };
 
-var close = function() {
+const close = () => {
   db.get().registrationOpen = false;
   log('registration', 'closed');
 };
 
-var getTeamByKey = function(key) {
-  var teams = db.get().teams;
+const getTeamByKey = key => {
+  const teams = db.get().teams;
 
-  var matches = teams.filter(function(team) {
+  const matches = teams.filter(team => {
     return team.key === key;
   });
 
   return matches[0];
 };
 
-var getTeamNames = function() {
-  return db.get().teams.map(function(team) {
+const getTeamNames = () => {
+  return db.get().teams.map(team => {
     return {
       name: team.name,
       colour: team.colour,
@@ -46,8 +45,8 @@ var getTeamNames = function() {
   });
 };
 
-var getAllTeams = function() {
-  return db.get().teams.map(function(team) {
+const getAllTeams = () => {
+  return db.get().teams.map(team => {
     return {
       key: team.key,
       name: team.name,
@@ -57,18 +56,18 @@ var getAllTeams = function() {
   });
 };
 
-var createTeam = function(name, email, role) {
+const createTeam = (name, email, role) => {
   name = name && name.trim();
   email = email && email.trim();
 
-  var validationError = validate(name, email, role);
+  const validationError = validate(name, email, role);
 
   if (validationError) {
-    log('registration', 'ignored: ' + validationError);
+    log('registration', `ignored: ${validationError}`);
     return { err: validationError };
   }
 
-  var team = {
+  const team = {
     key: createKey(),
     gravatar: getGravatarUrl(email),
     colour: colours.get(db.get().teams.length),
@@ -80,13 +79,13 @@ var createTeam = function(name, email, role) {
   };
 
   db.get().teams.push(team);
-  log('registration', team.name + ' (' + team.email +') registered');
+  log('registration', `${team.name} (${team.email}) registered`);
 
   return { team: team };
 };
 
-var deleteTeam = function(key) {
-  var teams = db.get().teams.filter(function(team) {
+const deleteTeam = key => {
+  const teams = db.get().teams.filter(team => {
     return team.key === key;
   });
 
@@ -94,25 +93,25 @@ var deleteTeam = function(key) {
     return 'Team not found';
   }
 
-  db.get().teams = db.get().teams.filter(function(team) {
+  db.get().teams = db.get().teams.filter(team => {
     return team.key !== key;
   });
 };
 
-var getStatus = function() {
+const getStatus = () => {
   return {
     open: db.get().registrationOpen,
     teamCount: db.get().teams.length
   };
 };
 
-var validate = function(name, email, role) {
+const validate = (name, email, role) => {
   if (!db.get().registrationOpen) {
     return 'Registration is currently closed';
   }
 
   if (colours.all.length <= db.get().teams.length) {
-    return 'Server is full (' + colours.all.length + ')';
+    return `Server is full (${colours.all.length})`;
   }
 
   if (!email || email.length > 50) {
@@ -127,7 +126,7 @@ var validate = function(name, email, role) {
     return 'Please enter a valid team name (25 chars or less)';
   }
 
-  var duplicates = db.get().teams.filter(function(team) {
+  var duplicates = db.get().teams.filter(team => {
     return team.name === name || team.email === email;
   });
 
@@ -136,17 +135,17 @@ var validate = function(name, email, role) {
   }
 
   if (roles.indexOf(role) === -1) {
-    return 'Valid roles: ' + roles.join(', ');
+    return `Valid roles: ${roles.join(', ')}`;
   }
 };
 
 module.exports = {
-  open: open,
-  close: close,
-  getTeamByKey: getTeamByKey,
-  getTeamNames: getTeamNames,
-  getAllTeams: getAllTeams,
-  createTeam: createTeam,
-  deleteTeam: deleteTeam,
-  getStatus: getStatus
+  open,
+  close,
+  getTeamByKey,
+  getTeamNames,
+  getAllTeams,
+  createTeam,
+  deleteTeam,
+  getStatus
 };
