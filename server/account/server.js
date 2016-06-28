@@ -3,10 +3,12 @@ var http = require('http');
 var ddos = require('./ddos');
 var log = require('../../lib/log');
 
+const config = require('../../config');
+
 var routes = require('./routes');
 var staticFileHandler = require('./file-handler');
 
-var startServer = function(port) {
+var startServer = function() {
   var handler = function(req, res) {
     return buildRequestObject(req, function(requestData) {
       var routeHandler = routes[requestData.key] || staticFileHandler;
@@ -18,11 +20,12 @@ var startServer = function(port) {
   };
 
   var server = http.createServer(handler);
+  const { bind, port } = config.server.account;
 
   server.on('connection', ddos.handler);
-  server.listen(port);
+  server.listen(port, bind);
 
-  log('account', 'listening on ' + port);
+  log('account', `listening on ${bind}:${port}`);
 };
 
 var buildRequestObject = function(req, callback) {

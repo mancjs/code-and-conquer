@@ -2,8 +2,9 @@ const net = require('net');
 const log = require('../../lib/log');
 const commands = require('./commands');
 const statuses = require('./statuses');
+const config = require('../../config');
 
-const startServer = port => {
+const startServer = () => {
   const parseRequest = data => {
     const parts = data.trim().split(' ');
 
@@ -51,8 +52,10 @@ const startServer = port => {
     });
   });
 
-  server.listen(port, '0.0.0.0');
-  log('game', `listening on ${port}`);
+  const { bind, port } = config.server.game;
+
+  server.listen(port, bind);
+  log('game', `listening on ${bind}:${port}`);
 };
 
 module.exports = {

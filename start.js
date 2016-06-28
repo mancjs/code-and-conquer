@@ -2,10 +2,10 @@ const engine = require('./server/game/engine');
 engine.loadExistingGame();
 
 const admin = require('./server/admin/server');
-admin.startServer(9000);
+admin.startServer();
 
 const account = require('./server/account/server');
-account.startServer(9001);
+account.startServer();
 
 const game = require('./server/game/server');
-game.startServer(9002);
+game.startServer();

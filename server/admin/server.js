@@ -2,7 +2,9 @@ var net = require('net');
 var log = require('../../lib/log');
 var commands = require('./commands');
 
-var startServer = function(port) {
+const config = require('../../config');
+
+var startServer = function() {
   var sendHelp = function(socket) {
     socket.write('commands: ' + Object.keys(commands).join(', ') + '\n');
     sendPrompt(socket);
@@ -54,8 +56,10 @@ var startServer = function(port) {
     });
   });
 
-  server.listen(port, 'localhost');
-  log('admin', 'listening on ' + port);
+  const { bind, port } = config.server.admin;
+
+  server.listen(port, bind);
+  log('admin', `listening on ${bind}:${port}`);
 };
 
 module.exports = {
