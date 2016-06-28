@@ -5,6 +5,7 @@ module.exports = {
     game: { bind: '0.0.0.0', port: 9002 }
   },
   game: {
+    bonus: { x2: 0.1, x3: 0.05 },
     roles: {}
   }
 };

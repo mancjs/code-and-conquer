@@ -1,3 +1,7 @@
+'use strict';
+
+const config = require('../../config');
+
 var generateRandomCoords = function(width, height, count) {
   var coords = [];
   var generated = {};
@@ -51,10 +55,12 @@ var generate = function(width, height) {
     }
   }
 
-  var double = generateRandomCoords(width, height, Math.ceil(width * height * 0.1));
+  const { x2, x3 } = config.game.bonus;
+
+  var double = generateRandomCoords(width, height, Math.ceil(width * height * x2));
   applyBonusSquares(cells, double.coords, 2);
 
-  var triple = generateRandomCoords(width, height, Math.ceil(width * height * 0.05));
+  var triple = generateRandomCoords(width, height, Math.ceil(width * height * x3));
   applyBonusSquares(cells, triple.coords, 3);
 
   return {

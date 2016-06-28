@@ -14,6 +14,8 @@ var initGame = function(args) {
   };
 
   engine.init(gridSize);
+
+  return getStatus();
 };
 
 var startGame = function() {
@@ -25,6 +27,8 @@ var startGame = function() {
 
   registration.close();
   engine.start();
+
+  return getStatus();
 };
 
 var stopGame = function() {
@@ -36,14 +40,18 @@ var stopGame = function() {
 
   registration.close();
   engine.stop();
+
+  return getStatus();
 };
 
 var openRegistration = function() {
   registration.open();
+  return getStatus();
 };
 
 var closeRegistration = function() {
   registration.close();
+  return getStatus();
 };
 
 var getTeams = function() {
@@ -120,6 +128,8 @@ var simulate = function() {
       engine.attack(teams[Math.floor(Math.random() * teams.length)].key, x, y);
     }
   }
+
+  return getStatus();
 };
 
 var getScores = function() {
@@ -170,14 +180,17 @@ var getScores = function() {
 
 var ddosEnable = function() {
   ddos.enable(true);
+  return getStatus();
 };
 
 var ddosDisable = function() {
   ddos.enable(false);
+  return getStatus();
 };
 
 var ddosClear = function() {
   ddos.clear();
+  return getStatus();
 };
 
 var ddosList = function() {
