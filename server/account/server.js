@@ -1,25 +1,23 @@
-var querystring = require('querystring');
-var http = require('http');
-var ddos = require('./ddos');
-var log = require('../../lib/log');
-
+const querystring = require('querystring');
+const http = require('http');
+const ddos = require('./ddos');
+const log = require('../../lib/log');
 const config = require('../../config');
+const routes = require('./routes');
+const staticFileHandler = require('./file-handler');
 
-var routes = require('./routes');
-var staticFileHandler = require('./file-handler');
+const startServer = () => {
+  const handler = (req, res) => {
+    return buildRequestObject(req, requestData => {
+      const routeHandler = routes[requestData.key] || staticFileHandler;
 
-var startServer = function() {
-  var handler = function(req, res) {
-    return buildRequestObject(req, function(requestData) {
-      var routeHandler = routes[requestData.key] || staticFileHandler;
-
-      return routeHandler(requestData, function(responseData) {
+      return routeHandler(requestData, responseData => {
         return serve(res, responseData);
       });
     });
   };
 
-  var server = http.createServer(handler);
+  const server = http.createServer(handler);
   const { bind, port } = config.server.account;
 
   server.on('connection', ddos.handler);
@@ -28,10 +26,10 @@ var startServer = function() {
   log('account', `listening on ${bind}:${port}`);
 };
 
-var buildRequestObject = function(req, callback) {
-  var parts = req.url.split('?');
+const buildRequestObject = (req, callback) => {
+  const parts = req.url.split('?');
 
-  var requestData = {
+  const requestData = {
     url: parts[0],
     key: req.method + ' ' + parts[0],
     query: querystring.parse(parts[1]),
@@ -46,9 +44,9 @@ var buildRequestObject = function(req, callback) {
     return callback(requestData);
   }
 
-  var jsonString = '';
+  const jsonString = '';
 
-  req.on('data', function(data) {
+  req.on('data', data => {
     jsonString += data;
 
     if (jsonString.length > 1e6) {
@@ -57,7 +55,7 @@ var buildRequestObject = function(req, callback) {
     }
   });
 
-  req.on('end', function() {
+  req.on('end', () => {
     try {
       requestData.body = JSON.parse(jsonString);
     } catch (err) {
@@ -68,7 +66,7 @@ var buildRequestObject = function(req, callback) {
   });
 };
 
-var serve = function(res, response) {
+const serve = (res, response) => {
   if (response.err) {
     res.statusCode = response.err;
     return res.end();
@@ -86,5 +84,5 @@ var serve = function(res, response) {
 };
 
 module.exports = {
-  startServer: startServer
+  startServer
 };
