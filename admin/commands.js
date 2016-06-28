@@ -1,7 +1,7 @@
 var db = require('../db/db');
 var ddos = require('../account/ddos');
 var engine = require('../game/engine');
-var registration = require('../registration/registration');
+var registration = require('../account/registration');
 
 var initGame = function(args) {
   if (!args || args.indexOf('x') === -1) {

@@ -3,7 +3,7 @@
 var db = require('../db/db');
 var expect = require('expect.js');
 var colours = require('../lib/colours');
-var registration = require('../registration/registration');
+var registration = require('../account/registration');
 
 var createString = function(length) {
   return new Array(length + 1).join('.');

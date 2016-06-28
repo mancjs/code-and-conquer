@@ -37,6 +37,28 @@ const attack = (team, args) => {
   return engine.attack(request.team, request.x, request.y);
 };
 
+const defend = (team, args) => {
+  const request = {
+    team: team,
+    x: args[0].split(',')[0],
+    y: args[0].split(',')[1]
+  };
+
+  const error = verifySingleCellRequest(request);
+
+  if (error) {
+    return { status: error };
+  }
+
+  return engine.defend(request.team, request.x, request.y);
+};
+
+const query = () => {
+  return engine.query();
+};
+
 module.exports = {
-  attack
+  attack,
+  defend,
+  query
 };

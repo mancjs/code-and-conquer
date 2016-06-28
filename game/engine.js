@@ -119,41 +119,47 @@ const attack = (key, x, y) => {
   };
 };
 
-var defend = function(key, x, y) {
-  var verificationError = verifyTeam(key);
+const defend = (key, x, y) => {
+  const verificationError = verifyTeam(key);
 
   if (verificationError) {
-    return verificationError;
+    return { status: verificationError };
   }
 
-  var redirection = roles.isTeamRedirected(key);
+  const redirection = roles.isTeamRedirected(key);
 
   if (redirection) {
     x = redirection.x;
     y = redirection.y;
   }
 
-  var state = db.get();
-  var cell = grid.getCell(state.grid, x, y);
+  const state = db.get();
+  const cell = grid.getCell(state.grid, x, y);
 
   if (!cell) {
-    return { err: ['no cell found at ', x, ',', y].join('') };
+    return { 
+      status: statuses.invalidCell,
+      result: { x, y }  
+    };
   }
 
-  var mineResult = roles.checkMineTrigger(key, x, y);
+  const mineResult = roles.checkMineTrigger(key, x, y);
 
   if (mineResult.triggered) {
     team.useAllRequests(key);
 
     return {
-      requestsRemaining: team.getRequestsRemaining(key),
-      triggeredMine: { owner: mineResult.owner }
+      status: statuses.infoMineTriggered,
+      result: {
+        requestsRemaining: team.getRequestsRemaining(key),
+        owner: mineResult.owner
+      }
     };
   }
 
   cell.health += 1;
 
-  var maxHealth = (cell.owner.name === 'cpu') ? 60 : 120;
+  const maxHealth = (cell.owner.name === 'cpu') ? 60 : 120;
 
   if (cell.health > maxHealth) {
     cell.health = maxHealth;
@@ -164,32 +170,41 @@ var defend = function(key, x, y) {
   team.useRequest(key);
 
   return {
-    requestsRemaining: team.getRequestsRemaining(key)
+    status: statuses.ok,
+    result: {
+      requestsRemaining: team.getRequestsRemaining(key)
+    }
   };
 };
 
-var query = function() {
-  var state = db.get();
+const query = () => {
+  const state = db.get();
 
   if (!state.grid) {
     return {
-      grid: [],
-      gameStarted: false
+      status: statuses.ok,
+      result: {
+        grid: [],
+        gameStarted: false
+      }
     };
   }
 
-  var grid = clone(state.grid);
+  const grid = clone(state.grid);
 
   roles.updateGridWithCloaks(grid);
 
   return {
-    grid: grid.cells,
-    gameStarted: state.gameStarted
+    status: statuses.ok,
+    result: {
+      grid: grid.cells,
+      gameStarted: state.gameStarted
+    }
   };
 };
 
-var roleVerify = function(key, role) {
-  var verificationError = verifyTeam(key);
+const roleVerify = (key, role) => {
+  const verificationError = verifyTeam(key);
 
   if (verificationError) {
     return verificationError;

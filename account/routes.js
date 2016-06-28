@@ -1,7 +1,7 @@
 var types = require('./types');
 var engine = require('../game/engine');
 var requests = require('../game/requests');
-var registration = require('../registration/registration');
+var registration = require('./registration');
 
 var root = function(request, response) {
   return response(types.redirect('/register'));
