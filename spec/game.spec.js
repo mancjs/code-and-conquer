@@ -1,12 +1,14 @@
 /* eslint-env mocha */
+'use strict';
 
-const db = require('../lib/db');
 const expect = require('expect.js');
+
+const config = require('../config');
+const db = require('../lib/db');
 const engine = require('../server/game/engine');
 const grid = require('../server/game/grid');
 const roles = require('../server/game/roles');
 const statuses = require('../server/game/statuses');
-const config = require('../config');
 
 beforeEach(() => {
   db.init();

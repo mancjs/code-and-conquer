@@ -1,24 +1,26 @@
 /* eslint-env mocha */
+'use strict';
 
-var db = require('../lib/db');
-var expect = require('expect.js');
-var requests = require('../server/game/requests');
+const expect = require('expect.js');
 
-describe('requests', function() {
-  beforeEach(function() {
-    var state = db.init();
+const db = require('../lib/db');
+const requests = require('../server/game/requests');
+
+describe('requests', () => {
+  beforeEach(() => {
+    const state = db.init();
     state.teams.push({ key: 'team-1', requests: 30 });
     state.teams.push({ key: 'team-2', requests: 30 });
     state.teams.push({ key: 'team-3', requests: 30 });
   });
 
-  it('refreshes all team requests after refresh period @slow', function(done) {
+  it('refreshes all team requests after refresh period @slow', done => {
     this.slow(5000);
     this.timeout(5000);
 
-    var state = db.get();
+    const state = db.get();
 
-    setTimeout(function() {
+    setTimeout(() => {
       expect(state.teams[0].requests).to.be(30);
       expect(state.teams[1].requests).to.be(30);
       expect(state.teams[2].requests).to.be(30);
@@ -32,8 +34,8 @@ describe('requests', function() {
     state.teams[2].requests = 30;
   });
 
-  it('calculates the correct number of seconds until next refresh', function() {
-    var date = new Date;
+  it('calculates the correct number of seconds until next refresh', () => {
+    const date = new Date;
 
     expect(requests.getSecondsUntilNextRefresh({
       refreshRateSecs: 60,

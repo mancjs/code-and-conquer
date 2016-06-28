@@ -1,149 +1,151 @@
 /* eslint-env mocha */
+'use strict';
 
-var db = require('../lib/db');
-var expect = require('expect.js');
-var colours = require('../lib/colours');
-var registration = require('../server/account/registration');
+const expect = require('expect.js');
 
-var createString = function(length) {
+const colours = require('../lib/colours');
+const db = require('../lib/db');
+const registration = require('../server/account/registration');
+
+const createString = length => {
   return new Array(length + 1).join('.');
 };
 
-beforeEach(function() {
+beforeEach(() => {
   db.init();
 });
 
-describe('registration', function() {
-  it('rejects when registration is closed', function() {
+describe('registration', () => {
+  it('rejects when registration is closed', () => {
     registration.close();
 
-    var response = registration.createTeam('Team Name', 'user@host.com', 'minelayer');
+    const response = registration.createTeam('Team Name', 'user@host.com', 'minelayer');
 
     expect(response.err).to.match(/closed/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when name is missing', function() {
+  it('rejects when name is missing', () => {
     registration.open();
 
-    var response = registration.createTeam(null, 'user@host.com', 'spy');
+    const response = registration.createTeam(null, 'user@host.com', 'spy');
 
     expect(response.err).to.match(/team name/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when name is more than 25 chars', function() {
+  it('rejects when name is more than 25 chars', () => {
     registration.open();
 
-    var response = registration.createTeam(createString(26), 'user@host.com', 'cloaker');
+    const response = registration.createTeam(createString(26), 'user@host.com', 'cloaker');
 
     expect(response.err).to.match(/team name/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when name is "cpu"', function() {
+  it('rejects when name is "cpu"', () => {
     registration.open();
 
-    var response = registration.createTeam('cpu', 'user@host.com', 'cloaker');
+    const response = registration.createTeam('cpu', 'user@host.com', 'cloaker');
 
     expect(response.err).to.match(/valid team name/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when email is missing', function() {
+  it('rejects when email is missing', () => {
     registration.open();
 
-    var response = registration.createTeam('Team Name', null, 'minelayer');
+    const response = registration.createTeam('Team Name', null, 'minelayer');
 
     expect(response.err).to.match(/email address/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when email is more than 50 chars', function() {
+  it('rejects when email is more than 50 chars', () => {
     registration.open();
 
-    var response = registration.createTeam('Team Name', createString(51), 'cloaker');
+    const response = registration.createTeam('Team Name', createString(51), 'cloaker');
 
     expect(response.err).to.match(/email address/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when role is missing', function() {
+  it('rejects when role is missing', () => {
     registration.open();
 
-    var response = registration.createTeam('Existing Team Name', 'user@host.com', null);
+    const response = registration.createTeam('Existing Team Name', 'user@host.com', null);
 
     expect(response.err).to.match(/Valid roles/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when role is invalid', function() {
+  it('rejects when role is invalid', () => {
     registration.open();
 
-    var response = registration.createTeam('Existing Team Name', 'user@host.com', 'invalid');
+    const response = registration.createTeam('Existing Team Name', 'user@host.com', 'invalid');
 
     expect(response.err).to.match(/Valid roles/);
     expect(db.get().teams.length).to.be(0);
   });
 
-  it('rejects when email is already in use', function() {
+  it('rejects when email is already in use', () => {
     registration.open();
 
     db.get().teams.push({ email: 'existing@host.com' });
-    var response = registration.createTeam('Team Name', 'existing@host.com', 'minelayer');
+    const response = registration.createTeam('Team Name', 'existing@host.com', 'minelayer');
 
     expect(response.err).to.match(/same name or email/);
     expect(db.get().teams.length).to.be(1);
   });
 
-  it('rejects when name is already in use', function() {
+  it('rejects when name is already in use', () => {
     registration.open();
 
     db.get().teams.push({ name: 'Existing Team Name' });
-    var response = registration.createTeam('Existing Team Name', 'user@host.com', 'cloaker');
+    const response = registration.createTeam('Existing Team Name', 'user@host.com', 'cloaker');
 
     expect(response.err).to.match(/same name or email/);
     expect(db.get().teams.length).to.be(1);
   });
 
-  it('accepts when name, email and role are valid', function() {
+  it('accepts when name, email and role are valid', () => {
     registration.open();
 
-    var response = registration.createTeam('Team Name', 'user@host.com', 'spy');
-    var validKeys = ['key', 'gravatar', 'colour', 'roleUsed', 'role', 'name', 'email', 'requests'];
+    const response = registration.createTeam('Team Name', 'user@host.com', 'spy');
+    const validKeys = ['key', 'gravatar', 'colour', 'roleUsed', 'role', 'name', 'email', 'requests'];
 
     expect(response.err).to.be(undefined);
     expect(response.team).to.only.have.keys(validKeys);
     expect(db.get().teams.length).to.be(1);
   });
 
-  it('assigns new colours to successive registrations', function() {
+  it('assigns new colours to successive registrations', () => {
     registration.open();
 
-    var response1 = registration.createTeam('Team Name 1', 'user1@host.com', 'spy');
-    var response2 = registration.createTeam('Team Name 2', 'user2@host.com', 'cloaker');
+    const response1 = registration.createTeam('Team Name 1', 'user1@host.com', 'spy');
+    const response2 = registration.createTeam('Team Name 2', 'user2@host.com', 'cloaker');
 
     expect(response1.team.colour).to.not.be(response2.team.colour);
   });
 
-  it('rejects registration when there are no more colours to use', function() {
+  it('rejects registration when there are no more colours to use', () => {
     registration.open();
 
-    colours.all.forEach(function() {
+    colours.all.forEach(() => {
       db.get().teams.push({ name: 'some-team' });
     });
 
-    var response = registration.createTeam('Team Name', 'user@host.com', 'spy');
+    const response = registration.createTeam('Team Name', 'user@host.com', 'spy');
 
     expect(response.err).to.match(/is full/);
     expect(db.get().teams.length).to.be(colours.all.length);
   });
 
-  it('returns correct team when queried', function() {
+  it('returns correct team when queried', () => {
     registration.open();
 
-    var response = registration.createTeam('Team Name', 'user@host.com', 'minelayer');
-    var team = registration.getTeamByKey(response.team.key);
+    const response = registration.createTeam('Team Name', 'user@host.com', 'minelayer');
+    const team = registration.getTeamByKey(response.team.key);
 
     expect(team).not.to.be(undefined);
     expect(team.key).to.be.ok();
