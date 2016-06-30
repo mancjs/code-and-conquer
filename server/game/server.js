@@ -51,6 +51,12 @@ const startServer = () => {
 
     socket.on('data', chunk => {
       buffer += chunk.toString();
+
+      if (buffer.length > config.server.game.maxBuffer) {
+        log('game', `${socket.remoteAddress} killed after sending too much data`);
+        return socket.destroy();
+      }
+
       buffer = runCommands(socket, buffer);
     });
   });
