@@ -4,6 +4,7 @@ module.exports = {
   ok: 'ok',
   okPong: 'ok.pong',
   okMineTriggered: 'ok.mine_triggered',
+  protocolRateLimit: 'err.proto_rate_limit',
   protocolMissingTeam: 'err.proto_missing_team',
   protocolBadArgs: 'err.proto_bad_args',
   gameNotStarted: 'err.game_not_started',

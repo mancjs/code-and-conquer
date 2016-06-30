@@ -297,6 +297,31 @@ describe('game', () => {
       expect(cell3.history.attacks[team3.name]).to.be(3);
       expect(cell3.history.defends[team3.name]).to.be(1);
     });
+
+    it('allows anonymous query and team-based query', () => {
+      const state = db.get();
+
+      const team1 = { key: 'team-1', name: 'Team 1', colour: 'colour-one', requests: 60 };
+
+      state.teams.push(team1);
+
+      // team-1 attacks cell 0,0 once
+      engine.attack('team-1', 0, 0);
+
+      // anonymous query
+      const result1 = engine.query();
+      const cell1 = result1.result.grid[0][0];
+      expect(cell1.health).to.be(config.game.health.cpu - 1);
+
+      // team-based query
+      const result2 = engine.query(team1.key);
+      const cell2 = result2.result.grid[0][0];
+      expect(cell2.health).to.be(config.game.health.cpu - 1);
+
+      // invalid team-based query
+      const result3 = engine.query('invalid');
+      expect(result3.status).to.be(statuses.noRequestsLeft);
+    });
   });
 
   describe('roles', () => {

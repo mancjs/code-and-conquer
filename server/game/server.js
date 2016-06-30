@@ -31,14 +31,27 @@ const startServer = () => {
 
     log('game', `command: ${request}`);
 
-    return sendStatus(socket, commands[req.name](req.team, req.args));
+    const result = commands[req.name](req.team, req.args);
+
+    if (result.status === statuses.protocolRateLimit) {
+      log('game', `${socket.remoteAddress} killed after hitting rate limit`);
+      socket.destroy();
+      return false;
+    }
+
+    sendStatus(socket, result);
+    return true;
   };
 
   const runCommands = (socket, buffer) => {
     const requests = buffer.split('\n');
 
     for (let i = 0; i < requests.length - 1; i++) {
-      runCommand(socket, requests[i]);
+      const successful = runCommand(socket, requests[i]);
+
+      if (!successful) {
+        break;
+      }
     }
 
     return requests[requests.length - 1];

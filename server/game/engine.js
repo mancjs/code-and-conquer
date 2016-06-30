@@ -207,7 +207,15 @@ const defend = (key, x, y) => {
   };
 };
 
-const query = () => {
+const query = key => {
+  if (key) {
+    const verificationError = verifyTeam(key);
+
+    if (verificationError) {
+      return { status: verificationError };
+    }
+  }
+
   const state = db.get();
 
   if (!state.grid) {

@@ -1,7 +1,22 @@
 'use strict';
 
+const config = require('../../config');
 const engine = require('./engine');
 const statuses = require('./statuses');
+
+let teamQueryHistory = {};
+
+const queryLimitHit = team => {
+  if (!teamQueryHistory[team]) {
+    teamQueryHistory[team] = new Date;
+    return false;
+  }
+
+  const gap = new Date - teamQueryHistory[team];
+  teamQueryHistory[team] = new Date;
+
+  return gap < config.server.game.minQueryGap;
+};
 
 const verifyProtocol = (team, args, argCount) => {
   if (!team) {
@@ -127,8 +142,18 @@ const defend = (team, args) => {
   return engine.defend(request.team, request.x, request.y);
 };
 
-const query = () => {
-  return engine.query();
+const query = team => {
+  if (!team) {
+    return { status: statuses.protocolMissingTeam };
+  }
+
+  const limitError = queryLimitHit(team);
+
+  if (limitError) {
+    return { status: statuses.protocolRateLimit };
+  }
+
+  return engine.query(team);
 };
 
 const mine = (team, args) => {
