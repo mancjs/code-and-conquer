@@ -15,9 +15,6 @@ describe('requests', () => {
   });
 
   it('refreshes all team requests after refresh period @slow', done => {
-    this.slow(5000);
-    this.timeout(5000);
-
     const state = db.get();
 
     setTimeout(() => {

@@ -94,10 +94,6 @@ const verifySpyRequest = request => {
   }
 };
 
-const ping = () => {
-  return { status: statuses.okPong };
-};
-
 const attack = (team, args) => {
   const protocolError = verifyProtocol(team, args, 1);
 
@@ -228,7 +224,6 @@ const spy = (team, args) => {
 };
 
 module.exports = {
-  ping,
   attack,
   defend,
   query,

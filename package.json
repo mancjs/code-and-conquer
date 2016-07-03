@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node start.js",
     "test": "NODE_ENV=test mocha --grep @slow --invert spec",
-    "test-all": "NODE_ENV=test mocha --slow 10000 spec"
+    "test-all": "NODE_ENV=test mocha --timeout 10000 --slow 10000 spec"
   },
   "author": "",
   "license": "MIT",

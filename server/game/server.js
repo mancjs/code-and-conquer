@@ -19,7 +19,9 @@ const startServer = () => {
   };
 
   const sendStatus = (socket, result) => {
-    socket.write(`${JSON.stringify(result)}\n`);
+    if (socket.connected) {
+      socket.write(`${JSON.stringify(result)}\n`);
+    }
   };
 
   const runCommand = (socket, request) => {
@@ -62,6 +64,8 @@ const startServer = () => {
 
     log('game', `${socket.remoteAddress} connected`);
 
+    socket.connected = true;
+
     socket.on('data', chunk => {
       buffer += chunk.toString();
 
@@ -71,6 +75,14 @@ const startServer = () => {
       }
 
       buffer = runCommands(socket, buffer);
+    });
+
+    socket.on('end', () => {
+      socket.connected = false;
+    });
+
+    socket.on('close', () => {
+      socket.connected = false;
     });
   });
 
