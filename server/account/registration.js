@@ -129,7 +129,11 @@ const validate = (name, email, role) => {
     return 'Please enter a valid team name (25 chars or less)';
   }
 
-  var duplicates = db.get().teams.filter(team => {
+  if (!name.match(/^\w+$/)) {
+    return 'Team name must match /^\w+$/';
+  }
+
+  const duplicates = db.get().teams.filter(team => {
     return team.name === name || team.email === email;
   });
 
