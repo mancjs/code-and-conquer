@@ -10,7 +10,7 @@ const roles = require('./roles');
 const statuses = require('./statuses');
 const team = require('./team');
 
-const verifyTeam = (key) => {
+const verifyTeam = key => {
   if (!db.get().gameStarted) {
     return statuses.gameNotStarted;
   }
@@ -209,10 +209,8 @@ const defend = (key, x, y) => {
 
 const query = key => {
   if (key) {
-    const verificationError = verifyTeam(key);
-
-    if (verificationError) {
-      return { status: verificationError };
+    if (!team.exists(key)) {
+      return { status: statuses.invalidTeam };
     }
   }
 

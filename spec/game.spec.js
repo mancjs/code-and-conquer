@@ -320,7 +320,7 @@ describe('game', () => {
 
       // invalid team-based query
       const result3 = engine.query('invalid');
-      expect(result3.status).to.be(statuses.noRequestsLeft);
+      expect(result3.status).to.be(statuses.invalidTeam);
     });
   });
 

@@ -22,6 +22,10 @@ const hasRequests = key => {
   return team && team.requests > 0;
 };
 
+const exists = key => {
+  return !!getByKey(key);
+};
+
 const useRequest = key => {
   getByKey(key).requests -= 1;
 };
@@ -52,6 +56,7 @@ const getPublicData = key => {
 module.exports = {
   existsByName,
   hasRequests,
+  exists,
   useRequest,
   useAllRequests,
   resetRequests,

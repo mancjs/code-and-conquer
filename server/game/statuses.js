@@ -15,6 +15,7 @@ module.exports = {
   missingCells: 'err.missing_cells',
   missingTargetTeam: 'err.missing_target_team',
   invalidCell: 'err.invalid_cell',
+  invalidTeam: 'err.invalid_team',
   roleNotAssigned: 'err.role_not_assigned',
   roleAlreadyUsed: 'err.role_already_used',
   roleTooManyCells: 'err.too_many_cells',
