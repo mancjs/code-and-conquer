@@ -51,7 +51,7 @@ const verifyMultipleCellRequest = request => {
     return statuses.missingTeamKey;
   }
 
-  if (!request.cells || request.cells.length > 0) {
+  if (!request.cells || request.cells.length === 0) {
     return statuses.missingCells;
   }
 

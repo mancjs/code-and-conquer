@@ -230,13 +230,19 @@ const query = key => {
 
   roles.updateGridWithCloaks(grid);
 
-  return {
+  const data = {
     status: statuses.ok,
     result: {
       grid: grid.cells,
       gameStarted: state.gameStarted
     }
   };
+
+  if (key) {
+    data.result.requestsRemaining = team.getRequestsRemaining(key);
+  }
+
+  return data;
 };
 
 const mine = (key, x, y) => {

@@ -718,4 +718,27 @@ describe('game', () => {
       expect(state.roleData.redirects['Team 2'].remaining).to.be(0);
     });
   });
+
+  describe('query', () => {
+    beforeEach(() => {
+      engine.init({ width: 5, height: 5 });
+      engine.start();
+    });
+
+    it('returns remaining requests if team key is used', () => {
+      const state = db.get();
+
+      const team = { key: 'team-1', requests: 10 };
+
+      state.teams.push(team);
+
+      engine.start();
+
+      const response1 = engine.query();
+      const response2 = engine.query('team-1');
+
+      expect(response1.result.requestsRemaining).to.be(undefined);
+      expect(response2.result.requestsRemaining).to.be(10);
+    });
+  });
 });
